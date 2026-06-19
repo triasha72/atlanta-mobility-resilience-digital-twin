@@ -31,23 +31,21 @@ Urban transportation networks can fail unevenly. A road closure may have limited
 - scikit-learn (reserved for the Version 1.1 ML baseline)
 - matplotlib
 
-## Quick start
+##  start
 
 ```bash
-# 1. Clone your GitHub repository and enter it
-cd atlanta-mobility-resilience-digital-twin
 
-# 2. Create an environment
+# 1. Create an environment
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 
-# 3. Install the project and development tools
+# 2. Install the project and development tools
 pip install -e ".[dev]"
 
-# 4. Run the manageable downtown demonstration
+# 3. Run the manageable downtown demonstration
 amrdt run --config configs/v1_demo.yaml
 
-# 5. Run tests
+# 4. Run tests
 pytest
 ```
 
@@ -55,7 +53,7 @@ The first run downloads and caches the configured road network in `data/processe
 
 ## Outputs
 
-After a successful run, you should see:
+After a successful run, one should see:
 
 ```text
 outputs/
@@ -76,7 +74,7 @@ figures/
 
 ## Configuration
 
-Start with `configs/v1_demo.yaml`. When the demo works, duplicate `configs/v1_atlanta_template.yaml`, document your origin/destination sampling logic, and replace the illustration points with research-grade data such as census tract or TAZ centroids.
+We start with `configs/v1_demo.yaml`. When the demo works, we duplicate `configs/v1_atlanta_template.yaml`, then we document our origin/destination sampling logic, and replace the illustration points with research-grade data such as census tract or TAZ centroids.
 
 ### Scenario types
 
@@ -88,11 +86,10 @@ Start with `configs/v1_demo.yaml`. When the demo works, duplicate `configs/v1_at
 
 ## Interpretation and limits
 
-The default road-network travel times are network-based approximations. They are useful for a reproducible resilience baseline but should not be interpreted as observed congestion or real-time traffic conditions. Version 1 also uses illustrative origin/destination points. Research claims should wait until you add documented tract/TAZ origins, opportunity destinations, equity variables, and scenario calibration.
+The default road-network travel times are network-based approximations. They are useful for a reproducible resilience baseline but should not be interpreted as observed congestion or real-time traffic conditions. Version 1 also uses illustrative origin/destination points. 
 
-## Recommended next milestones
+## next milestones
 
-1. Validate the demo network and closure outputs.
 2. Replace illustrative points with Atlanta census tract or TAZ centroids.
 3. Add destination opportunities: jobs, healthcare, grocery, or transit hubs.
 4. Add population and equity weights from ACS data.
@@ -101,11 +98,3 @@ The default road-network travel times are network-based approximations. They are
 7. Extend to GPU graph analytics and a graph neural network.
 
 See `docs/roadmap.md` and `docs/methodology.md` for the research plan.
-
-## Suggested citation
-
-If you later use this work in a poster, paper, or thesis, cite the software/data tools you rely on and describe the exact network extraction date, study boundary, OpenStreetMap query, routing assumptions, disruption rules, and data transformations.
-
-## License
-
-MIT. See `LICENSE`.
