@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlanta-mobility-resilience-digital-twin"
+version = "0.1.0"
+description = "A reproducible road-network resilience simulator for Atlanta mobility accessibility analysis."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+  {name = "Triasha Sarkar"}
+]
+dependencies = [
+  "geopandas>=1.0",
+  "matplotlib>=3.8",
+  "networkx>=3.2",
+  "numpy>=1.26",
+  "osmnx>=2.0",
+  "pandas>=2.2",
+  "pyyaml>=6.0",
+  "scikit-learn>=1.4",
+  "shapely>=2.0"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+gnn = ["torch>=2.3", "torch-geometric>=2.5"]
+gpu = ["cudf-cu12", "cugraph-cu12"]
+
+[project.scripts]
+amrdt = "amrdt.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

@@ -1,0 +1,71 @@
+project:
+  name: Atlanta Mobility Resilience Digital Twin
+  version: 0.1.0
+  random_seed: 42
+
+study_area:
+  # Fixed coordinates make the downtown demo reproducible.
+  # The point is near Downtown Atlanta / Georgia State University.
+  center_lat: 33.7580
+  center_lon: -84.3880
+  dist_meters: 1500
+  network_type: "drive"
+
+routing:
+  weight: "travel_time"
+  max_travel_time_minutes: 30
+
+scenarios:
+  - name: baseline
+    type: baseline
+
+  - name: random_3_edge_closure
+    type: random_edges
+    n_edges: 3
+
+  - name: high_betweenness_3_edge_closure
+    type: high_betweenness_edges
+    n_edges: 3
+
+origins:
+  - id: o1
+    label: Origin A
+    lon: -84.3940
+    lat: 33.7650
+    population_weight: 1.0
+
+  - id: o2
+    label: Origin B
+    lon: -84.3880
+    lat: 33.7560
+    population_weight: 1.0
+
+  - id: o3
+    label: Origin C
+    lon: -84.3795
+    lat: 33.7515
+    population_weight: 1.0
+
+destinations:
+  - id: d1
+    label: Destination A
+    lon: -84.3940
+    lat: 33.7500
+    opportunity_weight: 1.0
+
+  - id: d2
+    label: Destination B
+    lon: -84.3810
+    lat: 33.7560
+    opportunity_weight: 1.0
+
+  - id: d3
+    label: Destination C
+    lon: -84.3855
+    lat: 33.7630
+    opportunity_weight: 1.0
+
+paths:
+  graph_file: "data/processed/downtown_atlanta_demo_drive.graphml"
+  output_dir: "outputs"
+  figure_dir: "figures"

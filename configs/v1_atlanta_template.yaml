@@ -1,0 +1,32 @@
+project:
+  name: Atlanta Mobility Resilience Digital Twin
+  version: 0.1.0
+  random_seed: 42
+
+study_area:
+  place_name: "Atlanta, Georgia, USA"
+  network_type: "drive"
+
+routing:
+  weight: "travel_time"
+  max_travel_time_minutes: 30
+
+scenarios:
+  - name: baseline
+    type: baseline
+  - name: random_10_edge_closure
+    type: random_edges
+    n_edges: 10
+  - name: high_betweenness_10_edge_closure
+    type: high_betweenness_edges
+    n_edges: 10
+
+# Replace with tract centroids, Atlanta Regional Commission TAZs,
+# or a documented sample of origin/destination points.
+origins: []
+destinations: []
+
+paths:
+  graph_file: "data/processed/atlanta_drive.graphml"
+  output_dir: "outputs"
+  figure_dir: "figures"
