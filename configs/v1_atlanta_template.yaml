@@ -22,7 +22,6 @@ scenarios:
     n_edges: 10
 
 # Replace with tract centroids, Atlanta Regional Commission TAZs,
-# or a documented sample of origin/destination points.
 origins: []
 destinations: []
 
