@@ -4,7 +4,6 @@ project:
   random_seed: 42
 
 study_area:
-  # Fixed coordinates make the downtown demo reproducible.
   # The point is near Downtown Atlanta / Georgia State University.
   center_lat: 33.7580
   center_lon: -84.3880
