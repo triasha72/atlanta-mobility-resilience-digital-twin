@@ -31,7 +31,7 @@ Urban transportation networks can fail unevenly. A road closure may have limited
 - scikit-learn (reserved for the Version 1.1 ML baseline)
 - matplotlib
 
-##  start
+## Quick start
 
 ```bash
 
@@ -88,13 +88,12 @@ We start with `configs/v1_demo.yaml`. When the demo works, we duplicate `configs
 
 The default road-network travel times are network-based approximations. They are useful for a reproducible resilience baseline but should not be interpreted as observed congestion or real-time traffic conditions. Version 1 also uses illustrative origin/destination points. 
 
-## next milestones
+## What the analysis establishes
 
-2. Replace illustrative points with Atlanta census tract or TAZ centroids.
-3. Add destination opportunities: jobs, healthcare, grocery, or transit hubs.
-4. Add population and equity weights from ACS data.
-5. Add MARTA GTFS schedule data for a multimodal Version 2.
-6. Build a tabular ML baseline that predicts disruption severity.
-7. Extend to GPU graph analytics and a graph neural network.
-
-See `docs/roadmap.md` and `docs/methodology.md` for the research plan.
+The project demonstrates a reproducible way to compare baseline travel with
+explicit road-disruption scenarios and to trace changes in travel time,
+accessibility, and neighborhood burden back to the affected network elements.
+Its conclusions are limited to the configured demonstration network,
+illustrative origins and destinations, and network-based travel-time estimates.
+It does not claim calibrated disruption probability, observed congestion,
+real-time city operations, or causal equity impact.
