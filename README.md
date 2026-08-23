@@ -1,5 +1,7 @@
 # Atlanta Mobility Resilience Digital Twin
 
+[![CI](https://github.com/triasha72/atlanta-mobility-resilience-digital-twin/actions/workflows/ci.yml/badge.svg)](https://github.com/triasha72/atlanta-mobility-resilience-digital-twin/actions/workflows/ci.yml)
+
 A reproducible, research-oriented road-network resilience simulator for examining how targeted transportation disruptions affect travel time and access to opportunities in Atlanta.
 
 > **Version 1 scope:** Road-network resilience prototype. It models shortest-path travel-time accessibility under simulated edge closures. It is not yet a calibrated traffic assignment model or a full multimodal digital twin.
@@ -50,6 +52,11 @@ pytest
 ```
 
 The first run downloads and caches the configured road network in `data/processed/`. Later runs reuse the cached GraphML file.
+
+Pull requests run Ruff and the deterministic core test suite in GitHub Actions.
+The live OSM download remains an explicit local integration step because it
+depends on an external service; the resulting GraphML cache makes later runs
+repeatable.
 
 ## Outputs
 
