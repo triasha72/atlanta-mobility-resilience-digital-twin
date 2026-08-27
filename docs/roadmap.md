@@ -1,5 +1,7 @@
 # Roadmap
 
+[Project overview and current scope](../README.md)
+
 ## Version 1: Road-network resilience baseline
 
 - [x] OSM road-network download and GraphML caching

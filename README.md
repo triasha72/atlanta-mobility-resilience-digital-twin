@@ -1,5 +1,7 @@
 # Atlanta Mobility Resilience Digital Twin
 
+[Portfolio case study](https://triasha72.github.io/Portfolio/case-atlanta.html)
+
 [![CI](https://github.com/triasha72/atlanta-mobility-resilience-digital-twin/actions/workflows/ci.yml/badge.svg)](https://github.com/triasha72/atlanta-mobility-resilience-digital-twin/actions/workflows/ci.yml)
 
 A reproducible, research-oriented road-network resilience simulator for examining how targeted transportation disruptions affect travel time and access to opportunities in Atlanta.
