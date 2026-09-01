@@ -9,6 +9,7 @@ import pandas as pd
 from amrdt.accessibility import compute_od_matrix, summarize_accessibility
 from amrdt.metrics import compare_with_baseline, scenario_summary
 from amrdt.network import graph_summary, load_or_download_graph, nearest_nodes
+from amrdt.provenance import write_run_manifest
 from amrdt.scenarios import apply_scenario
 from amrdt.visualization import plot_disrupted_edges, plot_scenario_summary
 
@@ -114,5 +115,7 @@ def run_pipeline(config: dict) -> pd.DataFrame:
         summary,
         figure_dir / "scenario_summary.png",
     )
+
+    write_run_manifest(config, config["paths"]["graph_file"], output_dir)
 
     return summary

@@ -42,8 +42,7 @@ def load_or_download_graph(
     if center_point is not None:
         if dist_meters is None:
             raise ValueError(
-                "Set `dist_meters` when using `center_lat` and `center_lon` "
-                "in the configuration."
+                "Set `dist_meters` when using `center_lat` and `center_lon` in the configuration."
             )
 
         graph = ox.graph_from_point(

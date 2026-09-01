@@ -8,6 +8,32 @@ A reproducible, research-oriented road-network resilience simulator for examinin
 
 > **Version 1 scope:** Road-network resilience prototype. It models shortest-path travel-time accessibility under simulated edge closures. It is not yet a calibrated traffic assignment model or a full multimodal digital twin.
 
+## Project story
+
+**Situation.** A road closure does not affect every neighborhood equally, and a
+citywide average can hide who loses access to jobs, healthcare, or other useful
+destinations.
+
+**Task.** I built a transparent Atlanta baseline that can compare disruptions
+without pretending that free-flow routing is observed traffic behavior.
+
+**Action.** The pipeline downloads the real public OpenStreetMap road graph,
+adds travel-time attributes, snaps origins and destinations, and compares random
+closures with high-betweenness closures. Every run now writes a text-only
+manifest that hashes the OSM graph cache, configuration, and CSV outputs.
+
+**Result.** The first frozen public-data run covered a downtown Atlanta graph
+with 672 nodes and 1,641 directed edges. Closing the selected high-betweenness
+links increased mean travel time across the nine illustrative OD pairs by
+`0.103` minutes; the three-edge random closure changed none of those paths.
+Reachability and the toy opportunity count stayed unchanged. This is a
+free-flow software demonstration, not a calibrated traffic or equity result.
+
+The text-only evidence record is
+[`artifacts/atlanta_demo_v1.json`](artifacts/atlanta_demo_v1.json). It includes
+the public OSM/ODbL source, study boundary, graph and config hashes, scenario
+results, and interpretation limit without redistributing the raw graph.
+
 ## Research motivation
 
 Urban transportation networks can fail unevenly. A road closure may have limited impact on some neighborhoods but significantly reduce access to jobs, healthcare, or other destinations for others. This repository establishes a transparent baseline for measuring those differences and provides a foundation for later work in graph machine learning, GPU acceleration, multimodal transit disruption modeling, and synthetic mobility data.
@@ -80,6 +106,9 @@ figures/
 ├── random_3_edge_closure_affected_nodes.png
 └── high_betweenness_3_edge_closure_affected_nodes.png
 ```
+
+`outputs/run_manifest.json` records the OpenStreetMap/ODbL source boundary and
+SHA-256 hashes for the cached graph, configuration, and result tables.
 
 ## Configuration
 

@@ -53,7 +53,9 @@ def summarize_accessibility(
         .sum()
         .rename(columns={"opportunity_weight": "accessible_opportunities"})
     )
-    all_origins = pd.DataFrame({"origin_id": list(origin_weights), "population_weight": list(origin_weights.values())})
+    all_origins = pd.DataFrame(
+        {"origin_id": list(origin_weights), "population_weight": list(origin_weights.values())}
+    )
     access = all_origins.merge(access, on="origin_id", how="left")
     access["accessible_opportunities"] = access["accessible_opportunities"].fillna(0.0)
     return access

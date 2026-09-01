@@ -10,6 +10,8 @@
 - [x] Random and high-betweenness disruption scenarios
 - [x] Scenario metrics, CSV outputs, and figures
 - [x] Unit tests for core logic
+- [x] checksummed run manifest for the public OSM graph, config, and CSV outputs
+- [x] execute and review the first frozen Atlanta demo run
 
 ## Version 1.1: Research-quality data layer
 

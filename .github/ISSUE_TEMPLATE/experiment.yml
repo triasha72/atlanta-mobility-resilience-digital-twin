@@ -1,0 +1,21 @@
+name: Mobility scenario proposal
+description: Plan a network, accessibility, or disruption study with traceable public data.
+title: "experiment: "
+labels: ["experiment"]
+body:
+  - type: textarea
+    id: question
+    attributes: {label: "Planning question"}
+    validations: {required: true}
+  - type: textarea
+    id: data
+    attributes: {label: "Public data and geography", description: "Name OSM, ACS, GTFS, hazard, or destination sources, versions, licenses, and study boundary."}
+    validations: {required: true}
+  - type: textarea
+    id: scenario
+    attributes: {label: "Scenario and comparison", description: "Freeze origins, destinations, weights, closures, seeds, and baseline."}
+    validations: {required: true}
+  - type: textarea
+    id: interpretation
+    attributes: {label: "Interpretation limit", description: "Separate free-flow simulation from observed or calibrated traffic behavior."}
+    validations: {required: true}

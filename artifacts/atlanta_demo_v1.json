@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "created_utc": "2026-09-01T00:56:02+00:00",
+  "network_source": "OpenStreetMap via OSMnx",
+  "network_license": "ODbL-1.0",
+  "study_area": {
+    "center_lat": 33.758,
+    "center_lon": -84.388,
+    "radius_meters": 1500,
+    "network_type": "drive"
+  },
+  "graph": {
+    "nodes": 672,
+    "edges": 1641,
+    "sha256": "798989227e01931f538602880249c94baa1081c60ab29b77d7d2ab6b17be2552"
+  },
+  "config_sha256": "40abc608e3d677af8b87ecc964307e4aa38a87a55387deaf591ac5e684be5067",
+  "scenarios": [
+    {
+      "name": "baseline",
+      "removed_edges": 0,
+      "reachable_od_share": 1.0,
+      "mean_reachable_travel_time_minutes": 1.6222352950038925,
+      "mean_accessible_opportunities": 3.0
+    },
+    {
+      "name": "random_3_edge_closure",
+      "removed_edges": 3,
+      "reachable_od_share": 1.0,
+      "mean_reachable_travel_time_minutes": 1.6222352950038925,
+      "delta_mean_reachable_travel_time_minutes": 0.0,
+      "mean_accessible_opportunities": 3.0
+    },
+    {
+      "name": "high_betweenness_3_edge_closure",
+      "removed_edges": 4,
+      "reachable_od_share": 1.0,
+      "mean_reachable_travel_time_minutes": 1.7250432331454422,
+      "delta_mean_reachable_travel_time_minutes": 0.10280793814154965,
+      "mean_accessible_opportunities": 3.0
+    }
+  ],
+  "interpretation": "Free-flow shortest-path simulation over three illustrative origins and destinations; not observed traffic, calibrated demand, or an equity result.",
+  "contains_raw_osm_data": false
+}

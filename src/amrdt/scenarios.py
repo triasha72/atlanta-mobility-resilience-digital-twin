@@ -32,7 +32,9 @@ def _edge_pairs_ranked_by_betweenness(graph: nx.MultiDiGraph) -> list[tuple[int,
     return [edge for edge, _score in sorted(scores.items(), key=lambda item: item[1], reverse=True)]
 
 
-def _edges_for_pairs(graph: nx.MultiDiGraph, pairs: Iterable[tuple[int, int]]) -> list[tuple[int, int, int]]:
+def _edges_for_pairs(
+    graph: nx.MultiDiGraph, pairs: Iterable[tuple[int, int]]
+) -> list[tuple[int, int, int]]:
     """Expand undirected node pairs into concrete directed MultiDiGraph edge tuples."""
     selected: list[tuple[int, int, int]] = []
     pair_set = {frozenset(pair) for pair in pairs}
