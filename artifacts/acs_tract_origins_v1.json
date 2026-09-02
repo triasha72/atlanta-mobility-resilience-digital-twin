@@ -1,0 +1,34 @@
+{
+  "dataset": "American Community Survey tract estimates and Census Gazetteer",
+  "acs_release": "acs2024_5yr",
+  "acs_years": "2020-2024",
+  "tract_count": 50,
+  "represented_population_estimate": 216659,
+  "population_moe_median": 642.5,
+  "median_household_income_median": 108544.5,
+  "source_hashes": {
+    "fulton_acs.json": "3dbbb0aab62b834d9dd987070ea7c6002b1997c311f2d4f6651049f6ea5230b7",
+    "dekalb_acs.json": "a4b8251222d8f02fa4549bc558925baccc4701fea5850da7faa8faa38cf74868",
+    "2024_gaz_tracts_13.txt": "abfb7592f637df78ea99837329fcf5ef3d59921e3913b5fec35dfa4781095176"
+  },
+  "interpretation": "ACS values are survey estimates with margins of error; representative tract coordinates are routing origins, not observed trip starts.",
+  "sources": {
+    "fulton_acs.json": "https://api.censusreporter.org/1.0/data/show/acs2024_5yr?table_ids=B01003,B19013&geo_ids=140%7C05000US13121",
+    "dekalb_acs.json": "https://api.censusreporter.org/1.0/data/show/acs2024_5yr?table_ids=B01003,B19013&geo_ids=140%7C05000US13089",
+    "2024_gaz_tracts_13.txt": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_gaz_tracts_13.txt"
+  },
+  "selection": {
+    "counties": [
+      "Fulton County (121)",
+      "DeKalb County (089)"
+    ],
+    "center": {
+      "lat": 33.758,
+      "lon": -84.388
+    },
+    "radius_km": 10.0,
+    "ranking": "population estimate descending, GEOID ascending",
+    "limit": 50
+  },
+  "output_sha256": "3faed4817072e7dd006f86bb5ccfb4afcb6ca8e50cf170e99ba1dea5cb16e255"
+}

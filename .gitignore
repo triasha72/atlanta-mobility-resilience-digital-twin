@@ -11,6 +11,7 @@ venv/
 
 # Local data and generated artifacts
 data/raw/
+data/external/
 data/processed/
 outputs/*.csv
 outputs/*.geojson

@@ -29,10 +29,30 @@ links increased mean travel time across the nine illustrative OD pairs by
 Reachability and the toy opportunity count stayed unchanged. This is a
 free-flow software demonstration, not a calibrated traffic or equity result.
 
+The next data-layer release replaces the three hand-picked origin points with a
+reproducible sample of 50 Census tracts. It joins 2024 ACS five-year population
+and household-income estimates for Fulton and DeKalb counties to official
+Census representative coordinates, then selects the most populous tracts whose
+representative point lies within 10 km of downtown. The sample represents an
+estimated 216,659 residents. ACS margins of error are retained instead of
+treating survey estimates as exact counts.
+
 The text-only evidence record is
 [`artifacts/atlanta_demo_v1.json`](artifacts/atlanta_demo_v1.json). It includes
 the public OSM/ODbL source, study boundary, graph and config hashes, scenario
 results, and interpretation limit without redistributing the raw graph.
+
+The tract materialization evidence is
+[`artifacts/acs_tract_origins_v1.json`](artifacts/acs_tract_origins_v1.json).
+Rebuild the ignored row-level file with:
+
+```bash
+PYTHONPATH=src python scripts/materialize_acs_origins.py
+```
+
+This does not yet establish an equity result: tract representative points are
+routing origins, not observed trip starts, and the current destinations remain
+illustrative.
 
 ## Research motivation
 
@@ -124,7 +144,12 @@ We start with `configs/v1_demo.yaml`. When the demo works, we duplicate `configs
 
 ## Interpretation and limits
 
-The default road-network travel times are network-based approximations. They are useful for a reproducible resilience baseline but should not be interpreted as observed congestion or real-time traffic conditions. Version 1 also uses illustrative origin/destination points. 
+The default road-network travel times are network-based approximations. They are
+useful for a reproducible resilience baseline but should not be interpreted as
+observed congestion or real-time traffic conditions. The frozen Version 1 run
+uses illustrative origins and destinations. The ACS materializer now supplies
+population-weighted origins for the next run; essential destinations and
+observed travel calibration remain open.
 
 ## What the analysis establishes
 

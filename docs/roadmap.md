@@ -15,10 +15,11 @@
 
 ## Version 1.1: Research-quality data layer
 
-- [ ] Census tract or TAZ origins
+- [x] Census tract origins from official representative coordinates
 - [ ] Essential destinations and opportunity weights
-- [ ] ACS-derived population and equity weights
-- [ ] documented study area and sampling decisions
+- [x] ACS-derived population weights with margins of error retained
+- [x] documented study area and tract sampling decisions
+- [ ] propagate ACS uncertainty through accessibility comparisons
 
 ## Version 2: Transit and climate disruptions
 
