@@ -1,0 +1,34 @@
+{
+  "dataset": "OpenStreetMap essential-service destinations",
+  "license": "Open Data Commons Open Database License (ODbL) 1.0",
+  "attribution": "OpenStreetMap contributors",
+  "source": "https://overpass-api.de/api/interpreter",
+  "query": "[out:json][timeout:120];(nwr(around:10000,33.758,-84.388)[\"amenity\"~\"^(hospital|clinic|fire_station)$\"];nwr(around:10000,33.758,-84.388)[\"healthcare\"~\"^(hospital|clinic)$\"];nwr(around:10000,33.758,-84.388)[\"amenity\"=\"social_facility\"][\"social_facility\"=\"shelter\"];);out center tags;",
+  "selection": {
+    "center": {
+      "lat": 33.758,
+      "lon": -84.388
+    },
+    "radius_km": 10.0,
+    "categories": [
+      "hospital",
+      "clinic",
+      "fire_station",
+      "shelter"
+    ]
+  },
+  "source_sha256": "ec5b663800eacd6002d75567b2c139423fb739019c3fad270fc155379c692628",
+  "output_sha256": "19e039c6a30103fe1918c42c950b1e7b317e5a5fc76260f5798a76df5d487e97",
+  "destination_count": 101,
+  "counts_by_category": {
+    "clinic": 42,
+    "fire_station": 35,
+    "hospital": 14,
+    "shelter": 10
+  },
+  "weighting": "one opportunity per mapped facility; categories are reported separately",
+  "limitations": [
+    "OpenStreetMap completeness and tags vary by place and time.",
+    "A mapped facility is counted once; capacity and service quality are not inferred."
+  ]
+}

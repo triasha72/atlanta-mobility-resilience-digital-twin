@@ -16,7 +16,7 @@
 ## Version 1.1: Research-quality data layer
 
 - [x] Census tract origins from official representative coordinates
-- [ ] Essential destinations and opportunity weights
+- [x] Essential destinations and transparent facility-count opportunity weights
 - [x] ACS-derived population weights with margins of error retained
 - [x] documented study area and tract sampling decisions
 - [ ] propagate ACS uncertainty through accessibility comparisons

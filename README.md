@@ -29,7 +29,7 @@ links increased mean travel time across the nine illustrative OD pairs by
 Reachability and the toy opportunity count stayed unchanged. This is a
 free-flow software demonstration, not a calibrated traffic or equity result.
 
-The next data-layer release replaces the three hand-picked origin points with a
+The research data layer replaces the three hand-picked origin points with a
 reproducible sample of 50 Census tracts. It joins 2024 ACS five-year population
 and household-income estimates for Fulton and DeKalb counties to official
 Census representative coordinates, then selects the most populous tracts whose
@@ -51,8 +51,11 @@ PYTHONPATH=src python scripts/materialize_acs_origins.py
 ```
 
 This does not yet establish an equity result: tract representative points are
-routing origins, not observed trip starts, and the current destinations remain
-illustrative.
+routing origins, not observed trip starts. The matching destination layer uses
+101 currently mapped OpenStreetMap facilities within 10 km of downtown: 42
+clinics, 35 fire stations, 14 hospitals, and 10 shelters. Each mapped facility
+counts as one opportunity because consistent capacity data is not available.
+OpenStreetMap coverage can still be incomplete.
 
 ## Research motivation
 
@@ -132,7 +135,9 @@ SHA-256 hashes for the cached graph, configuration, and result tables.
 
 ## Configuration
 
-We start with `configs/v1_demo.yaml`. When the demo works, we duplicate `configs/v1_atlanta_template.yaml`, then we document our origin/destination sampling logic, and replace the illustration points with research-grade data such as census tract or TAZ centroids.
+`configs/v1_demo.yaml` is the small software smoke test.
+`configs/v1_atlanta_template.yaml` reads the generated ACS origin and
+OpenStreetMap destination tables for the research run.
 
 ### Scenario types
 
@@ -147,9 +152,9 @@ We start with `configs/v1_demo.yaml`. When the demo works, we duplicate `configs
 The default road-network travel times are network-based approximations. They are
 useful for a reproducible resilience baseline but should not be interpreted as
 observed congestion or real-time traffic conditions. The frozen Version 1 run
-uses illustrative origins and destinations. The ACS materializer now supplies
-population-weighted origins for the next run; essential destinations and
-observed travel calibration remain open.
+uses illustrative origins and destinations. The research configuration now
+uses population-weighted ACS origins and mapped essential destinations;
+observed travel calibration remains open.
 
 ## What the analysis establishes
 
