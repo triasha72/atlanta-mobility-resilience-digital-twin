@@ -37,6 +37,11 @@ representative point lies within 10 km of downtown. The sample represents an
 estimated 216,659 residents. ACS margins of error are retained instead of
 treating survey estimates as exact counts.
 
+`scripts/propagate_acs_uncertainty.py` carries those 90% margins of error
+through every completed accessibility scenario with deterministic Monte Carlo
+draws. It reports the mean and 5th/95th percentiles instead of treating each
+tract population estimate as exact.
+
 The text-only evidence record is
 [`artifacts/atlanta_demo_v1.json`](artifacts/atlanta_demo_v1.json). It includes
 the public OSM/ODbL source, study boundary, graph and config hashes, scenario

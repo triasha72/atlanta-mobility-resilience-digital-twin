@@ -19,7 +19,7 @@
 - [x] Essential destinations and transparent facility-count opportunity weights
 - [x] ACS-derived population weights with margins of error retained
 - [x] documented study area and tract sampling decisions
-- [ ] propagate ACS uncertainty through accessibility comparisons
+- [x] propagate ACS population uncertainty through accessibility comparisons
 
 ## Version 2: Transit and climate disruptions
 
