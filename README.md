@@ -52,7 +52,7 @@ The tract materialization evidence is
 Rebuild the ignored row-level file with:
 
 ```bash
-PYTHONPATH=src python scripts/materialize_acs_origins.py
+PYTHONPATH=src python3 scripts/materialize_acs_origins.py
 ```
 
 This does not yet establish an equity result: tract representative points are
@@ -69,7 +69,7 @@ routes, 45,367 trips, and 2,076,118 stop-time rows; its content-free receipt is
 Rebuild the ignored source ZIP and the receipt with:
 
 ```bash
-PYTHONPATH=src python scripts/audit_marta_gtfs.py \
+PYTHONPATH=src python3 scripts/audit_marta_gtfs.py \
   --output reports/marta_gtfs_receipt_v1.json
 ```
 
@@ -83,7 +83,7 @@ trips for one GTFS service date, a fixed 800-metre walk-transfer cap, and an
 barriers, or real-time delay.
 
 ```bash
-PYTHONPATH=src python scripts/evaluate_transit_accessibility.py \
+PYTHONPATH=src python3 scripts/evaluate_transit_accessibility.py \
   --gtfs data/external/marta/google_transit.zip \
   --service-date 20260907 --departure 08:00 \
   --origins data/processed/acs_tract_origins.csv \
