@@ -33,7 +33,11 @@ def test_service_date_and_walking_transfer_helpers(tmp_path) -> None:
     feed = tmp_path / "marta.zip"
     with ZipFile(feed, "w") as archive:
         archive.writestr("calendar.txt", "service_id,monday,start_date,end_date\nWK,1,20260101,20261231\n")
-    assert active_service_ids(feed, "20260105") == {"WK"}
-    assert active_service_ids(feed, "20260106") == set()
+        archive.writestr(
+            "calendar_dates.txt",
+            "service_id,date,exception_type\nWK,20260105,2\nSAT,20260106,1\n",
+        )
+    assert active_service_ids(feed, "20260105") == set()
+    assert active_service_ids(feed, "20260106") == {"SAT"}
     assert walking_transfer_minutes(400) == 5.0
     assert 100 < haversine_meters(33.75, -84.39, 33.751, -84.39) < 120

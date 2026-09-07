@@ -22,22 +22,32 @@ REQUIRED_FILES = frozenset(
 
 
 def active_service_ids(path: str | Path, service_date: str) -> set[str]:
-    """Return calendar services active on a YYYYMMDD date from a GTFS feed.
-
-    This supports the base calendar only.  A caller must account for
-    `calendar_dates.txt` exceptions before presenting a holiday-service result.
-    """
+    """Return GTFS services active on a YYYYMMDD date, including exceptions."""
 
     if len(service_date) != 8 or not service_date.isdigit():
         raise ValueError("service_date must use YYYYMMDD format")
     weekday = __import__("datetime").datetime.strptime(service_date, "%Y%m%d").strftime("%A").lower()
     with ZipFile(path) as archive, archive.open("calendar.txt") as raw:
         reader = csv.DictReader(io.TextIOWrapper(raw, encoding="utf-8-sig", newline=""))
-        return {
+        active = {
             row["service_id"]
             for row in reader
             if row["start_date"] <= service_date <= row["end_date"] and row.get(weekday) == "1"
         }
+        if "calendar_dates.txt" not in archive.namelist():
+            return active
+        with archive.open("calendar_dates.txt") as exceptions:
+            exception_rows = csv.DictReader(
+                io.TextIOWrapper(exceptions, encoding="utf-8-sig", newline="")
+            )
+            for row in exception_rows:
+                if row.get("date") != service_date:
+                    continue
+                if row.get("exception_type") == "1":
+                    active.add(row["service_id"])
+                elif row.get("exception_type") == "2":
+                    active.discard(row["service_id"])
+        return active
 
 
 def walking_transfer_minutes(distance_meters: float, *, walking_speed_kph: float = 4.8) -> float:
