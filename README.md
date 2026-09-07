@@ -72,6 +72,9 @@ Urban transportation networks can fail unevenly. A road closure may have limited
 
 ## What this project does
 
+The data flow and its real-world limits are summarized in
+[the system architecture](docs/architecture.md).
+
 - downloads and caches a drivable road network from OpenStreetMap via OSMnx
 - adds speed and travel-time attributes to road links
 - snaps configured origins and destinations to the network
@@ -115,6 +118,11 @@ depends on an external service; the resulting GraphML cache makes later runs
 repeatable.
 
 ## Outputs
+
+![Scenario comparison](figures/scenario_summary.png)
+
+The chart is generated from the same scenario table used by the written
+analysis; it is not a hand-edited illustration.
 
 After a successful run, one should see:
 
