@@ -62,6 +62,21 @@ clinics, 35 fire stations, 14 hospitals, and 10 shelters. Each mapped facility
 counts as one opportunity because consistent capacity data is not available.
 OpenStreetMap coverage can still be incomplete.
 
+The transit track now starts from MARTA's public static GTFS schedule rather
+than a hand-built station list. The audited feed contains 7,055 stops, 86
+routes, 45,367 trips, and 2,076,118 stop-time rows; its content-free receipt is
+[`reports/marta_gtfs_receipt_v1.json`](reports/marta_gtfs_receipt_v1.json).
+Rebuild the ignored source ZIP and the receipt with:
+
+```bash
+PYTHONPATH=src python scripts/audit_marta_gtfs.py \
+  --output reports/marta_gtfs_receipt_v1.json
+```
+
+This verifies the public schedule structure only. A road-plus-transit
+accessibility result still needs a documented walking-transfer rule and a
+service-date-specific routing model.
+
 ## Research motivation
 
 Urban transportation networks can fail unevenly. A road closure may have limited impact on some neighborhoods but significantly reduce access to jobs, healthcare, or other destinations for others. This repository establishes a transparent baseline for measuring those differences and provides a foundation for later work in graph machine learning, GPU acceleration, multimodal transit disruption modeling, and synthetic mobility data.

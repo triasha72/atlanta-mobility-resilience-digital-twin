@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "dataset": "MARTA GTFS Schedule",
+  "source_url": "https://itsmarta.com/google_transit_feed/google_transit.zip",
+  "feed_sha256": "f4a36309f42858d3c55bf46298395471621ba6ec1888a141c543a1190a52e2e1",
+  "required_files": [
+    "agency.txt",
+    "calendar.txt",
+    "routes.txt",
+    "stop_times.txt",
+    "stops.txt",
+    "trips.txt"
+  ],
+  "row_counts": {
+    "agency.txt": 1,
+    "calendar.txt": 22,
+    "routes.txt": 86,
+    "stop_times.txt": 2076118,
+    "stops.txt": 7055,
+    "trips.txt": 45367
+  },
+  "route_type_counts": {
+    "0": 1,
+    "1": 4,
+    "3": 81
+  },
+  "contains_source_rows": false,
+  "next_step": "Join stop locations to the road graph with a documented walking-transfer rule before reporting multimodal accessibility."
+}

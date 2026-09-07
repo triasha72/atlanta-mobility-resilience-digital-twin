@@ -23,7 +23,8 @@
 
 ## Version 2: Transit and climate disruptions
 
-- [ ] MARTA GTFS schedule integration
+- [x] Audit MARTA's public GTFS schedule and record its checksum, scale, and route types
+- [ ] Join GTFS stops to the road graph with a frozen walking-transfer rule
 - [ ] road plus transit multimodal accessibility
 - [ ] flood, heat, or severe-weather disruption layers
 - [ ] repeated simulations and uncertainty intervals
