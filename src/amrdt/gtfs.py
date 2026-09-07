@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import io
+import math
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -18,6 +19,45 @@ REQUIRED_FILES = frozenset(
         "calendar.txt",
     }
 )
+
+
+def active_service_ids(path: str | Path, service_date: str) -> set[str]:
+    """Return calendar services active on a YYYYMMDD date from a GTFS feed.
+
+    This supports the base calendar only.  A caller must account for
+    `calendar_dates.txt` exceptions before presenting a holiday-service result.
+    """
+
+    if len(service_date) != 8 or not service_date.isdigit():
+        raise ValueError("service_date must use YYYYMMDD format")
+    weekday = __import__("datetime").datetime.strptime(service_date, "%Y%m%d").strftime("%A").lower()
+    with ZipFile(path) as archive, archive.open("calendar.txt") as raw:
+        reader = csv.DictReader(io.TextIOWrapper(raw, encoding="utf-8-sig", newline=""))
+        return {
+            row["service_id"]
+            for row in reader
+            if row["start_date"] <= service_date <= row["end_date"] and row.get(weekday) == "1"
+        }
+
+
+def walking_transfer_minutes(distance_meters: float, *, walking_speed_kph: float = 4.8) -> float:
+    """Convert a documented walk distance to time with input validation."""
+
+    if distance_meters < 0 or walking_speed_kph <= 0:
+        raise ValueError("distance_meters must be nonnegative and walking_speed_kph positive")
+    return distance_meters / (walking_speed_kph * 1000 / 60)
+
+
+def haversine_meters(lat_a: float, lon_a: float, lat_b: float, lon_b: float) -> float:
+    """Great-circle distance used only to screen a walk-transfer candidate."""
+
+    radius = 6_371_000.0
+    lat_delta = math.radians(lat_b - lat_a)
+    lon_delta = math.radians(lon_b - lon_a)
+    value = math.sin(lat_delta / 2) ** 2 + math.cos(math.radians(lat_a)) * math.cos(
+        math.radians(lat_b)
+    ) * math.sin(lon_delta / 2) ** 2
+    return 2 * radius * math.asin(math.sqrt(value))
 
 
 def _row_count(archive: ZipFile, name: str) -> int:

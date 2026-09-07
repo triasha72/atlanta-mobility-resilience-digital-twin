@@ -1,6 +1,11 @@
 from zipfile import ZipFile
 
-from amrdt.gtfs import audit_gtfs_feed
+from amrdt.gtfs import (
+    active_service_ids,
+    audit_gtfs_feed,
+    haversine_meters,
+    walking_transfer_minutes,
+)
 
 
 def test_audits_required_gtfs_files_without_retaining_rows(tmp_path) -> None:
@@ -22,3 +27,13 @@ def test_audits_required_gtfs_files_without_retaining_rows(tmp_path) -> None:
     assert receipt["row_counts"]["stops.txt"] == 1
     assert receipt["route_type_counts"] == {"1": 1, "3": 1}
     assert receipt["contains_source_rows"] is False
+
+
+def test_service_date_and_walking_transfer_helpers(tmp_path) -> None:
+    feed = tmp_path / "marta.zip"
+    with ZipFile(feed, "w") as archive:
+        archive.writestr("calendar.txt", "service_id,monday,start_date,end_date\nWK,1,20260101,20261231\n")
+    assert active_service_ids(feed, "20260105") == {"WK"}
+    assert active_service_ids(feed, "20260106") == set()
+    assert walking_transfer_minutes(400) == 5.0
+    assert 100 < haversine_meters(33.75, -84.39, 33.751, -84.39) < 120
