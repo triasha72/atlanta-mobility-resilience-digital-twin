@@ -88,6 +88,32 @@ def earliest_arrival_seconds(
 
     if max_walk_meters <= 0 or transfer_penalty_minutes < 0:
         raise ValueError("max_walk_meters must be positive and transfer penalty nonnegative")
+    arrival = arrivals_at_stops(
+        stops,
+        connections,
+        origin_lat=origin_lat,
+        origin_lon=origin_lon,
+        departure_seconds=departure_seconds,
+        max_walk_meters=max_walk_meters,
+        walking_speed_kph=walking_speed_kph,
+        transfer_penalty_minutes=transfer_penalty_minutes,
+    )
+    best: float | None = None
+    for stop_id, reached in arrival.items():
+        stop = stops[stop_id]
+        distance = haversine_meters(destination_lat, destination_lon, stop.lat, stop.lon)
+        if distance <= max_walk_meters:
+            candidate = reached + walking_transfer_minutes(distance, walking_speed_kph=walking_speed_kph) * 60
+            best = candidate if best is None else min(best, candidate)
+    return None if best is None else round(best)
+
+
+def arrivals_at_stops(
+    stops: dict[str, Stop], connections: list[Connection], *, origin_lat: float, origin_lon: float,
+    departure_seconds: int, max_walk_meters: float = 800.0, walking_speed_kph: float = 4.8,
+    transfer_penalty_minutes: float = 2.0,
+) -> dict[str, float]:
+    """Scan one origin once, returning earliest scheduled arrival by stop."""
     arrival: dict[str, float] = {}
     for stop in stops.values():
         distance = haversine_meters(origin_lat, origin_lon, stop.lat, stop.lon)
@@ -95,7 +121,6 @@ def earliest_arrival_seconds(
             arrival[stop.stop_id] = departure_seconds + walking_transfer_minutes(
                 distance, walking_speed_kph=walking_speed_kph
             ) * 60
-    best: float | None = None
     for connection in connections:
         ready = arrival.get(connection.departure_stop)
         if ready is None or ready > connection.departure_seconds:
@@ -104,10 +129,19 @@ def earliest_arrival_seconds(
         candidate = connection.arrival_seconds + transfer_penalty_minutes * 60
         if current is None or candidate < current:
             arrival[connection.arrival_stop] = candidate
-    for stop_id, reached in arrival.items():
+    return arrival
+
+
+def arrival_at_destination(
+    stops: dict[str, Stop], arrivals: dict[str, float], *, destination_lat: float,
+    destination_lon: float, max_walk_meters: float = 800.0, walking_speed_kph: float = 4.8,
+) -> int | None:
+    """Finish one schedule scan with the final walking transfer to a destination."""
+
+    candidates = []
+    for stop_id, reached in arrivals.items():
         stop = stops[stop_id]
         distance = haversine_meters(destination_lat, destination_lon, stop.lat, stop.lon)
         if distance <= max_walk_meters:
-            candidate = reached + walking_transfer_minutes(distance, walking_speed_kph=walking_speed_kph) * 60
-            best = candidate if best is None else min(best, candidate)
-    return None if best is None else round(best)
+            candidates.append(reached + walking_transfer_minutes(distance, walking_speed_kph=walking_speed_kph) * 60)
+    return round(min(candidates)) if candidates else None

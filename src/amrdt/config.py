@@ -22,6 +22,8 @@ def _point_records(config: dict[str, Any], key: str, config_path: Path) -> list[
     if not source.is_absolute():
         source = (config_path.parent / source).resolve()
     frame = pd.read_csv(source)
+    if "id" not in frame.columns and "geoid" in frame.columns:
+        frame = frame.rename(columns={"geoid": "id"})
     required = {"id", "lat", "lon"}
     missing = required.difference(frame.columns)
     if missing:

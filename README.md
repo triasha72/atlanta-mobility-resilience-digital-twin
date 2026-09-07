@@ -77,6 +77,20 @@ This verifies the public schedule structure only. A road-plus-transit
 accessibility result still needs a documented walking-transfer rule and a
 service-date-specific routing model.
 
+The first schedule-aware walk-transit-walk path is now available. It uses active
+trips for one GTFS service date, a fixed 800-metre walk-transfer cap, and an
+08:00 departure by default. It does not yet model fares, capacity, walking-path
+barriers, or real-time delay.
+
+```bash
+PYTHONPATH=src python scripts/evaluate_transit_accessibility.py \
+  --gtfs data/external/marta/google_transit.zip \
+  --service-date 20260907 --departure 08:00 \
+  --origins data/processed/acs_tract_origins.csv \
+  --destinations data/processed/osm_essential_destinations.csv \
+  --output outputs/transit_accessibility_20260907_0800.csv
+```
+
 ## Research motivation
 
 Urban transportation networks can fail unevenly. A road closure may have limited impact on some neighborhoods but significantly reduce access to jobs, healthcare, or other destinations for others. This repository establishes a transparent baseline for measuring those differences and provides a foundation for later work in graph machine learning, GPU acceleration, multimodal transit disruption modeling, and synthetic mobility data.
