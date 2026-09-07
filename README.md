@@ -78,7 +78,8 @@ accessibility result still needs a documented walking-transfer rule and a
 service-date-specific routing model.
 
 The first schedule-aware walk-transit-walk path is now available. It uses active
-trips for one GTFS service date, a fixed 800-metre walk-transfer cap, and an
+trips for one GTFS service date, an 800-metre origin/destination walk cap, a
+250-metre nearby-stop transfer walk cap, and an
 08:00 departure by default. The router keeps riders on the same scheduled
 vehicle without an added transfer penalty and applies a two-minute penalty only
 when boarding a different vehicle. It does not yet model fares, capacity,

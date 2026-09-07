@@ -75,6 +75,31 @@ def load_active_schedule(path: str | Path, service_date: str) -> tuple[dict[str,
     return stops, sorted(connections, key=lambda item: item.departure_seconds)
 
 
+def build_walking_transfer_index(
+    stops: dict[str, Stop], *, max_walk_meters: float = 250.0
+) -> dict[str, list[tuple[str, float]]]:
+    """Index nearby stops that can be linked by a short transfer walk."""
+    if max_walk_meters <= 0:
+        raise ValueError("max_walk_meters must be positive")
+    cell_size = max_walk_meters / 111_000
+    cells: dict[tuple[int, int], list[Stop]] = {}
+    for stop in stops.values():
+        cell = (int(stop.lat // cell_size), int(stop.lon // cell_size))
+        cells.setdefault(cell, []).append(stop)
+    transfers: dict[str, list[tuple[str, float]]] = {stop_id: [] for stop_id in stops}
+    for stop in stops.values():
+        cell = (int(stop.lat // cell_size), int(stop.lon // cell_size))
+        for lat_offset in (-1, 0, 1):
+            for lon_offset in (-1, 0, 1):
+                for neighbor in cells.get((cell[0] + lat_offset, cell[1] + lon_offset), []):
+                    if neighbor.stop_id == stop.stop_id:
+                        continue
+                    distance = haversine_meters(stop.lat, stop.lon, neighbor.lat, neighbor.lon)
+                    if distance <= max_walk_meters:
+                        transfers[stop.stop_id].append((neighbor.stop_id, distance))
+    return transfers
+
+
 def earliest_arrival_seconds(
     stops: dict[str, Stop],
     connections: list[Connection],
@@ -121,6 +146,7 @@ def arrivals_at_stops(
     stops: dict[str, Stop], connections: list[Connection], *, origin_lat: float, origin_lon: float,
     departure_seconds: int, max_walk_meters: float = 800.0, walking_speed_kph: float = 4.8,
     transfer_penalty_minutes: float = 2.0,
+    walking_transfers: dict[str, list[tuple[str, float]]] | None = None,
 ) -> dict[str, float]:
     """Scan one origin once, returning earliest scheduled arrival by stop."""
     arrival: dict[str, float] = {}
@@ -136,8 +162,18 @@ def arrivals_at_stops(
         on_same_vehicle = connection.trip_id in boarded_trips
         if not on_same_vehicle:
             ready = arrival.get(connection.departure_stop)
-            if ready is None:
+            candidates: list[float] = [] if ready is None else [ready]
+            for nearby_stop, distance in (walking_transfers or {}).get(connection.departure_stop, []):
+                nearby_arrival = arrival.get(nearby_stop)
+                if nearby_arrival is not None:
+                    candidates.append(
+                        nearby_arrival + walking_transfer_minutes(
+                            distance, walking_speed_kph=walking_speed_kph
+                        ) * 60
+                    )
+            if not candidates:
                 continue
+            ready = min(candidates)
             is_origin_walk = initial_arrival.get(connection.departure_stop) == ready
             transfer_seconds = 0 if is_origin_walk else transfer_penalty_minutes * 60
             if ready + transfer_seconds > connection.departure_seconds:

@@ -7,7 +7,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from amrdt.transit import arrival_at_destination, arrivals_at_stops, load_active_schedule
+from amrdt.transit import (
+    arrival_at_destination,
+    arrivals_at_stops,
+    build_walking_transfer_index,
+    load_active_schedule,
+)
 
 
 def departure_seconds(value: str) -> int:
@@ -26,8 +31,12 @@ def main() -> int:
     parser.add_argument("--destinations", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--max-walk-meters", type=float, default=800.0)
+    parser.add_argument("--max-transfer-walk-meters", type=float, default=250.0)
     args = parser.parse_args()
     stops, connections = load_active_schedule(args.gtfs, args.service_date)
+    walking_transfers = build_walking_transfer_index(
+        stops, max_walk_meters=args.max_transfer_walk_meters
+    )
     origins, destinations = pd.read_csv(args.origins), pd.read_csv(args.destinations)
     origin_id = "id" if "id" in origins else "geoid"
     start = departure_seconds(args.departure)
@@ -36,6 +45,7 @@ def main() -> int:
         arrivals = arrivals_at_stops(
             stops, connections, origin_lat=float(origin.lat), origin_lon=float(origin.lon),
             departure_seconds=start, max_walk_meters=args.max_walk_meters,
+            walking_transfers=walking_transfers,
         )
         for destination in destinations.itertuples(index=False):
             arrival = arrival_at_destination(
