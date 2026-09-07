@@ -25,6 +25,7 @@ class Connection:
     arrival_stop: str
     departure_seconds: int
     arrival_seconds: int
+    trip_id: str = ""
 
 
 def _seconds(value: str) -> int:
@@ -62,7 +63,15 @@ def load_active_schedule(path: str | Path, service_date: str) -> tuple[dict[str,
                 continue
             departure, arrival = _seconds(before["departure_time"]), _seconds(after["arrival_time"])
             if arrival >= departure:
-                connections.append(Connection(before["stop_id"], after["stop_id"], departure, arrival))
+                connections.append(
+                    Connection(
+                        before["stop_id"],
+                        after["stop_id"],
+                        departure,
+                        arrival,
+                        before["trip_id"],
+                    )
+                )
     return stops, sorted(connections, key=lambda item: item.departure_seconds)
 
 
@@ -121,12 +130,21 @@ def arrivals_at_stops(
             arrival[stop.stop_id] = departure_seconds + walking_transfer_minutes(
                 distance, walking_speed_kph=walking_speed_kph
             ) * 60
+    initial_arrival = arrival.copy()
+    boarded_trips: set[str] = set()
     for connection in connections:
-        ready = arrival.get(connection.departure_stop)
-        if ready is None or ready > connection.departure_seconds:
-            continue
+        on_same_vehicle = connection.trip_id in boarded_trips
+        if not on_same_vehicle:
+            ready = arrival.get(connection.departure_stop)
+            if ready is None:
+                continue
+            is_origin_walk = initial_arrival.get(connection.departure_stop) == ready
+            transfer_seconds = 0 if is_origin_walk else transfer_penalty_minutes * 60
+            if ready + transfer_seconds > connection.departure_seconds:
+                continue
+            boarded_trips.add(connection.trip_id)
         current = arrival.get(connection.arrival_stop)
-        candidate = connection.arrival_seconds + transfer_penalty_minutes * 60
+        candidate = connection.arrival_seconds
         if current is None or candidate < current:
             arrival[connection.arrival_stop] = candidate
     return arrival

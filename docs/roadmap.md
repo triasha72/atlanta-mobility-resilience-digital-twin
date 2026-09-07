@@ -26,8 +26,13 @@
 - [x] Audit MARTA's public GTFS schedule and record its checksum, scale, and route types
 - [x] Implement a schedule-aware GTFS walk-transit-walk router with a frozen
   walking-transfer rule, service-date selection, and exceptions.
-- [ ] Run the router against the downloaded MARTA feed and a frozen tract-to-
-  destination accessibility configuration.
+- [x] Run the router against MARTA's downloaded feed for 50 ACS tract centroids,
+  101 mapped essential facilities, and 07:00, 08:00, and 09:00 departures.
+- [x] Fix same-vehicle transfer handling after three MARTA Trip Planner checks
+  exposed inflated travel times.
+- [x] Generate a fixed-seed, 20-case manual validation sample and scorer.
+- [ ] Complete the 20 documented MARTA planner checks and publish the resulting
+  diagnostic summary. This is a schedule-model check, not an observed-trip study.
 - [ ] flood, heat, or severe-weather disruption layers
 - [ ] repeated simulations and uncertainty intervals
 

@@ -1,0 +1,4 @@
+case_id,service_date,departure,model_endpoint_description,planner_endpoint_description,model_minutes,planner_minutes,absolute_difference_minutes,assessment
+case_01,2026-09-07,08:00,"Tract centroid near 10th St NE and Williams St to Atlanta Children's Day Shelter","10th St NE and Williams St to North Avenue",18,12,6,"Same practical accessibility band; endpoints are approximated differently."
+case_02,2026-09-07,08:00,"Tract centroid near Briarcliff Rd NE and Briar Vista Ter NE to DeKalb County Fire Rescue Station 1","Briarcliff Rd NE and Briar Vista Ter NE to Clifton Rd and Clifton Way",20,7,13,"Same under-30-minute band; planner uses its own walking and stop-selection assumptions."
+case_03,2026-09-07,08:00,"Tract centroid near 17th St NW and Market St to Gateway Center","17th St NW and Market St to Pryor St SW and Memorial Dr SW",23,28,5,"Same under-30-minute band; endpoints are approximated differently."

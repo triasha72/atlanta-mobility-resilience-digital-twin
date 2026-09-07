@@ -79,8 +79,10 @@ service-date-specific routing model.
 
 The first schedule-aware walk-transit-walk path is now available. It uses active
 trips for one GTFS service date, a fixed 800-metre walk-transfer cap, and an
-08:00 departure by default. It does not yet model fares, capacity, walking-path
-barriers, or real-time delay.
+08:00 departure by default. The router keeps riders on the same scheduled
+vehicle without an added transfer penalty and applies a two-minute penalty only
+when boarding a different vehicle. It does not yet model fares, capacity,
+walking-path barriers, or real-time delay.
 
 ```bash
 PYTHONPATH=src python3 scripts/evaluate_transit_accessibility.py \
@@ -90,6 +92,82 @@ PYTHONPATH=src python3 scripts/evaluate_transit_accessibility.py \
   --destinations data/processed/osm_essential_destinations.csv \
   --output outputs/transit_accessibility_20260907_0800.csv
 ```
+
+Once runs are available for more than one departure time, build the report
+used for review. It keeps the underlying OD files intact and applies practical
+30-, 45-, 60-, and 90-minute limits only in the summary.
+
+```bash
+PYTHONPATH=src python3 scripts/summarize_transit_accessibility.py \
+  --inputs outputs/transit_accessibility_20260907_0700.csv \
+           outputs/transit_accessibility_20260907_0800.csv \
+           outputs/transit_accessibility_20260907_0900.csv \
+  --summary-output outputs/transit_accessibility_summary_20260907.csv \
+  --origin-output outputs/transit_accessibility_by_origin_20260907.csv \
+  --figure-output figures/transit_accessibility_summary_20260907.png
+```
+
+The report measures scheduled door-to-door access between tract centroids and
+mapped essential facilities. Before using it as a project finding, manually
+check a small, documented set of routes in the
+[MARTA Trip Planner](https://tracker.itsmarta.com/plan). It is a static-GTFS
+comparison, not a claim about real-time reliability, fares, capacity, or
+walking barriers.
+
+### Corrected schedule result: 7 September 2026
+
+The first completed schedule run covers 50 ACS tract centroids and 101 mapped
+essential facilities, using MARTA's static GTFS feed and an 800-metre walk cap.
+These are scheduled-access results, not observed rider travel times.
+
+| Departure | OD pairs within 30 min | within 60 min | within 90 min |
+| --- | ---: | ---: | ---: |
+| 07:00 | 10.9% | 29.1% | 49.1% |
+| 08:00 | 10.9% | 28.0% | 46.7% |
+| 09:00 | 10.7% | 26.7% | 45.1% |
+
+The 08:00, 60-minute result corresponds to 1,414 of 5,050 sampled OD pairs.
+Across tracts, the population-weighted share of mapped facilities reachable in
+60 minutes is 28.0%. The decline from 07:00 to 09:00 is small but consistent in
+this sample; it should be treated as a schedule pattern to investigate, not a
+causal service-quality conclusion.
+
+Three public route checks against MARTA's Trip Planner are recorded in
+[`reports/transit_planner_sanity_checks_20260907.csv`](reports/transit_planner_sanity_checks_20260907.csv).
+They were selected to catch gross routing errors after a transfer-handling fix.
+They are not a random or independent accuracy benchmark, and should not be
+reported as one.
+
+### Reproducible manual validation sample
+
+Use the following command to create 20 public-coordinate checks: four each
+from the 0–30, 31–60, 61–90, over-90-minute, and no-scheduled-arrival bands.
+The fixed seed means that another reviewer can reproduce the exact same sample.
+
+```bash
+PYTHONPATH=src python3 scripts/create_transit_validation_sample.py \
+  --od outputs/transit_accessibility_20260907_0800.csv \
+  --origins data/processed/acs_tract_origins.csv \
+  --destinations data/processed/osm_essential_destinations.csv \
+  --service-date 20260907 --departure 08:00 \
+  --output outputs/transit_validation_sample_20260907_0800.csv
+```
+
+Each row includes a direct MARTA Trip Planner URL for the sampled public map
+points. Record the first practical itinerary in `planner_minutes`, who checked
+it, and the date checked. Do not replace missing model arrivals with a guessed
+number. After completing the numeric planner times, score the completed rows:
+
+```bash
+PYTHONPATH=src python3 scripts/score_transit_validation.py \
+  --input outputs/transit_validation_sample_20260907_0800.csv \
+  --summary-output reports/transit_validation_summary_20260907.csv \
+  --cases-output reports/transit_validation_cases_20260907.csv
+```
+
+This comparison is a diagnostic for schedule and walking assumptions. It is not
+a rider survey, a real-time reliability study, or a substitute for observed
+travel-time data.
 
 ## Research motivation
 

@@ -15,7 +15,11 @@ Version 1 intentionally uses a light data stack so the complete pipeline is repr
 - **Equity variables:** population and household income are survey estimates,
   and their margins of error are retained. They support descriptive weighting,
   not causal claims about individual travelers.
-- **Transit:** Version 2 will add a documented MARTA GTFS Schedule feed and transit disruption scenarios.
+- **Transit:** the project uses MARTA's public static GTFS Schedule feed for
+  schedule-based walk-transit-walk accessibility. The 7 September 2026 run
+  evaluates 50 tract centroids against 101 mapped essential facilities at
+  07:00, 08:00, and 09:00. It is not a real-time, fare, capacity, or observed
+  travel-time dataset. Transit disruption scenarios remain future work.
 
 Materialize the real destination table with:
 
