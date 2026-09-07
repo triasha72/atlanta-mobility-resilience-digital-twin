@@ -38,6 +38,7 @@ def test_score_completed_checks_uses_only_numeric_reviews() -> None:
     result = score_completed_checks(
         pd.DataFrame({"travel_time_minutes": [20.0, 50.0, 60.0], "planner_minutes": [25.0, 70.0, None]})
     )
-    assert result.loc[0, "completed_numeric_cases"] == 2
+    assert result.loc[0, "completed_planner_cases"] == 2
+    assert result.loc[0, "comparable_numeric_cases"] == 2
     assert result.loc[0, "mean_absolute_difference_minutes"] == 12.5
     assert result.loc[0, "share_within_15_minutes"] == 0.5

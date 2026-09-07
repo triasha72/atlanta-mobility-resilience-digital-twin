@@ -114,29 +114,23 @@ check a small, documented set of routes in the
 comparison, not a claim about real-time reliability, fares, capacity, or
 walking barriers.
 
-### Corrected schedule result: 7 September 2026
+### Schedule run and validation status: 7 September 2026
 
 The first completed schedule run covers 50 ACS tract centroids and 101 mapped
 essential facilities, using MARTA's static GTFS feed and an 800-metre walk cap.
 These are scheduled-access results, not observed rider travel times.
 
-| Departure | OD pairs within 30 min | within 60 min | within 90 min |
-| --- | ---: | ---: | ---: |
-| 07:00 | 10.9% | 29.1% | 49.1% |
-| 08:00 | 10.9% | 28.0% | 46.7% |
-| 09:00 | 10.7% | 26.7% | 45.1% |
+The first run produced schedule percentages for 07:00, 08:00, and 09:00, but a
+fixed 20-case MARTA Planner review found that the local router misses walking
+transfers between nearby stops. Four sampled cases with no local route had a
+MARTA itinerary, and several long local routes were substantially shorter in
+the planner. The percentages are retained as development outputs and are not
+presented as validated findings.
 
-The 08:00, 60-minute result corresponds to 1,414 of 5,050 sampled OD pairs.
-Across tracts, the population-weighted share of mapped facilities reachable in
-60 minutes is 28.0%. The decline from 07:00 to 09:00 is small but consistent in
-this sample; it should be treated as a schedule pattern to investigate, not a
-causal service-quality conclusion.
-
-Three public route checks against MARTA's Trip Planner are recorded in
+The original three public route checks are recorded in
 [`reports/transit_planner_sanity_checks_20260907.csv`](reports/transit_planner_sanity_checks_20260907.csv).
-They were selected to catch gross routing errors after a transfer-handling fix.
-They are not a random or independent accuracy benchmark, and should not be
-reported as one.
+The fuller result and next implementation are in
+[`reports/transit_planner_validation_20260907.md`](reports/transit_planner_validation_20260907.md).
 
 ### Reproducible manual validation sample
 

@@ -31,8 +31,10 @@
 - [x] Fix same-vehicle transfer handling after three MARTA Trip Planner checks
   exposed inflated travel times.
 - [x] Generate a fixed-seed, 20-case manual validation sample and scorer.
-- [ ] Complete the 20 documented MARTA planner checks and publish the resulting
-  diagnostic summary. This is a schedule-model check, not an observed-trip study.
+- [x] Complete the 20 documented MARTA planner checks and publish the routing
+  gap they exposed. This is a schedule-model check, not an observed-trip study.
+- [ ] Add spatially indexed walking links between nearby stops, then rerun the
+  same 20-case comparison before publishing accessibility percentages.
 - [ ] flood, heat, or severe-weather disruption layers
 - [ ] repeated simulations and uncertainty intervals
 
