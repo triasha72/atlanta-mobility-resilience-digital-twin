@@ -1,0 +1,113 @@
+"""Small schedule-aware GTFS transit router for reproducible accessibility studies."""
+
+from __future__ import annotations
+
+import csv
+import io
+from dataclasses import dataclass
+from itertools import pairwise
+from pathlib import Path
+from zipfile import ZipFile
+
+from amrdt.gtfs import active_service_ids, haversine_meters, walking_transfer_minutes
+
+
+@dataclass(frozen=True)
+class Stop:
+    stop_id: str
+    lat: float
+    lon: float
+
+
+@dataclass(frozen=True)
+class Connection:
+    departure_stop: str
+    arrival_stop: str
+    departure_seconds: int
+    arrival_seconds: int
+
+
+def _seconds(value: str) -> int:
+    hours, minutes, seconds = (int(part) for part in value.split(":"))
+    return hours * 3600 + minutes * 60 + seconds
+
+
+def _read_rows(archive: ZipFile, name: str) -> list[dict[str, str]]:
+    with archive.open(name) as raw:
+        return list(csv.DictReader(io.TextIOWrapper(raw, encoding="utf-8-sig", newline="")))
+
+
+def load_active_schedule(path: str | Path, service_date: str) -> tuple[dict[str, Stop], list[Connection]]:
+    """Load stops and consecutive active-trip connections for one GTFS service date."""
+
+    active_services = active_service_ids(path, service_date)
+    with ZipFile(path) as archive:
+        stops = {
+            row["stop_id"]: Stop(row["stop_id"], float(row["stop_lat"]), float(row["stop_lon"]))
+            for row in _read_rows(archive, "stops.txt")
+            if row.get("stop_lat") and row.get("stop_lon")
+        }
+        trip_services = {
+            row["trip_id"]: row["service_id"] for row in _read_rows(archive, "trips.txt")
+        }
+        by_trip: dict[str, list[dict[str, str]]] = {}
+        for row in _read_rows(archive, "stop_times.txt"):
+            if trip_services.get(row["trip_id"]) in active_services:
+                by_trip.setdefault(row["trip_id"], []).append(row)
+    connections: list[Connection] = []
+    for times in by_trip.values():
+        ordered = sorted(times, key=lambda row: int(row["stop_sequence"]))
+        for before, after in pairwise(ordered):
+            if before["stop_id"] not in stops or after["stop_id"] not in stops:
+                continue
+            departure, arrival = _seconds(before["departure_time"]), _seconds(after["arrival_time"])
+            if arrival >= departure:
+                connections.append(Connection(before["stop_id"], after["stop_id"], departure, arrival))
+    return stops, sorted(connections, key=lambda item: item.departure_seconds)
+
+
+def earliest_arrival_seconds(
+    stops: dict[str, Stop],
+    connections: list[Connection],
+    *,
+    origin_lat: float,
+    origin_lon: float,
+    destination_lat: float,
+    destination_lon: float,
+    departure_seconds: int,
+    max_walk_meters: float = 800.0,
+    walking_speed_kph: float = 4.8,
+    transfer_penalty_minutes: float = 2.0,
+) -> int | None:
+    """Return earliest walk-transit-walk arrival with one service-day schedule.
+
+    This connection-scan implementation allows transfers between scheduled
+    vehicle legs. It does not model fares, vehicle capacity, real-time delays,
+    or walking paths around barriers; those remain external calibration needs.
+    """
+
+    if max_walk_meters <= 0 or transfer_penalty_minutes < 0:
+        raise ValueError("max_walk_meters must be positive and transfer penalty nonnegative")
+    arrival: dict[str, float] = {}
+    for stop in stops.values():
+        distance = haversine_meters(origin_lat, origin_lon, stop.lat, stop.lon)
+        if distance <= max_walk_meters:
+            arrival[stop.stop_id] = departure_seconds + walking_transfer_minutes(
+                distance, walking_speed_kph=walking_speed_kph
+            ) * 60
+    best: float | None = None
+    for connection in connections:
+        ready = arrival.get(connection.departure_stop)
+        if ready is None or ready > connection.departure_seconds:
+            continue
+        current = arrival.get(connection.arrival_stop)
+        candidate = connection.arrival_seconds + transfer_penalty_minutes * 60
+        if current is None or candidate < current:
+            arrival[connection.arrival_stop] = candidate
+    for stop_id, reached in arrival.items():
+        stop = stops[stop_id]
+        distance = haversine_meters(destination_lat, destination_lon, stop.lat, stop.lon)
+        if distance <= max_walk_meters:
+            candidate = reached + walking_transfer_minutes(distance, walking_speed_kph=walking_speed_kph) * 60
+            best = candidate if best is None else min(best, candidate)
+    return None if best is None else round(best)
