@@ -1,0 +1,18 @@
+{
+  "dataset": "OpenStreetMap pedestrian network",
+  "license": "Open Data Commons Open Database License (ODbL) 1.0",
+  "attribution": "OpenStreetMap contributors",
+  "network_type": "walk",
+  "center": {
+    "lat": 33.758,
+    "lon": -84.388
+  },
+  "radius_meters": 12000,
+  "graphml_sha256": "c44bd83d1ead3362b049663e81e87385165977c40ec35e7ec1dad04d5cac7928",
+  "nodes": 119225,
+  "edges": 337326,
+  "limitations": [
+    "Walkable OSM links do not establish sidewalk condition, safety, or ADA accessibility.",
+    "The graph is a source snapshot and does not measure temporary closures."
+  ]
+}

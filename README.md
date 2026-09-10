@@ -78,7 +78,7 @@ accessibility result still needs a documented walking-transfer rule and a
 service-date-specific routing model.
 
 The first schedule-aware walk-transit-walk path is now available. It uses active
-trips for one GTFS service date, an 800-metre origin/destination walk cap, a
+trips for one GTFS service date, a 2,500-metre origin/destination walk cap, a
 250-metre nearby-stop transfer walk cap, and an
 08:00 departure by default. The router keeps riders on the same scheduled
 vehicle without an added transfer penalty and applies a two-minute penalty only
@@ -122,11 +122,20 @@ essential facilities, using MARTA's static GTFS feed and an 800-metre walk cap.
 These are scheduled-access results, not observed rider travel times.
 
 The first run produced schedule percentages for 07:00, 08:00, and 09:00, but a
-fixed 20-case MARTA Planner review found that the local router misses walking
-transfers between nearby stops. Four sampled cases with no local route had a
-MARTA itinerary, and several long local routes were substantially shorter in
-the planner. The percentages are retained as development outputs and are not
-presented as validated findings.
+fixed 20-case MARTA Planner review found that the local router missed walking
+transfers between nearby stops. The router now indexes 250-metre nearby-stop
+walks. A replacement-planner review on 14 September 2026 used timestamped
+public URLs for all 20 cases: every MARTA route was returned, while the local
+model had four no-arrival results under its original 800-metre access-walk cap.
+The mean absolute difference across the 16 comparable cases was 8.66 minutes.
+
+A network-walking calibration found that a 2,500-metre access-walk cap removes
+those four false no-arrival cases; the 20-case calibration mean absolute
+difference was 8.59 minutes
+minutes. This is a calibration finding, not a final validation: a separate
+holdout sample must be checked before any aggregate accessibility percentage is
+published as a project result. The scored review is recorded in
+[`reports/transit_validation_summary_20260914.csv`](reports/transit_validation_summary_20260914.csv).
 
 The original three public route checks are recorded in
 [`reports/transit_planner_sanity_checks_20260907.csv`](reports/transit_planner_sanity_checks_20260907.csv).
@@ -163,6 +172,88 @@ PYTHONPATH=src python3 scripts/score_transit_validation.py \
 This comparison is a diagnostic for schedule and walking assumptions. It is not
 a rider survey, a real-time reliability study, or a substitute for observed
 travel-time data.
+
+### Independent holdout and publication gate
+
+The calibrated router parameters and pre-registered holdout gate are frozen in
+[`artifacts/transit_validation_protocol_v1.json`](artifacts/transit_validation_protocol_v1.json).
+After regenerating the full OD run with those parameters, create a new sample
+that excludes every reviewed calibration origin-destination pair:
+
+```bash
+PYTHONPATH=src python3 scripts/create_transit_holdout_sample.py \
+  --od outputs/transit_accessibility_20260914_0800.csv \
+  --origins data/processed/acs_tract_origins.csv \
+  --destinations data/processed/osm_essential_destinations.csv \
+  --reviewed reports/transit_validation_cases_20260914.csv \
+  --service-date 20260914 --departure 08:00 \
+  --output outputs/transit_validation_holdout_20260914_0800.csv
+```
+
+Record the Rider Tools results in that CSV, then score it with
+`--gate-output reports/transit_validation_holdout_gate_20260914.csv`. The
+aggregate report remains unpublished unless the gate passes.
+
+The completed 14 September 2026 holdout did **not** pass that gate: it had zero
+false no-arrivals and a 5.93-minute median absolute difference, but only 75%
+of cases were within 15 minutes (the pre-registered threshold is 80%). The
+full decision and next validation cycle are documented in
+[`reports/transit_holdout_validation_20260914.md`](reports/transit_holdout_validation_20260914.md).
+Accordingly, the aggregate accessibility outputs remain diagnostic artifacts,
+not published project findings.
+
+### Pedestrian-network walking legs
+
+The default cap is a reproducible calibration approximation. To replace it with
+walk-network travel time, cache an OpenStreetMap pedestrian graph and pass it
+to the evaluator:
+
+```bash
+PYTHONPATH=src python3 scripts/cache_pedestrian_network.py
+
+PYTHONPATH=src python3 scripts/evaluate_transit_accessibility.py \
+  --gtfs data/external/marta/google_transit.zip \
+  --service-date 20260914 --departure 08:00 \
+  --origins data/processed/acs_tract_origins.csv \
+  --destinations data/processed/osm_essential_destinations.csv \
+  --walk-graph data/processed/atlanta_walk.graphml \
+  --output outputs/transit_accessibility_20260914_0800.csv
+```
+
+This uses directed shortest-path walking time on cached OSM edges for access
+and egress. It does not establish sidewalk condition, safety, accessibility,
+or temporary closures.
+
+### Tract-access sensitivity
+
+The failed independent holdout showed that long centroid-to-stop walks are a
+major source of error. Generate the labeled centroid sensitivity proxies with:
+
+```bash
+PYTHONPATH=src python3 scripts/create_tract_access_proxies.py \
+  --origins data/processed/acs_tract_origins.csv \
+  --gazetteer data/external/acs2024/2024_gaz_tracts_13.txt \
+  --output data/processed/acs_tract_access_proxies.csv
+```
+
+These points are area-equivalent radial proxies based on tract land area; they
+are a sensitivity layer, not asserted within-tract residential samples. A
+future calibrated model must replace them with polygon-backed sampling before
+using them for published tract estimates.
+
+The initial proxy calibration is recorded in
+[`reports/transit_proxy_calibration_20260914.md`](reports/transit_proxy_calibration_20260914.md).
+It is promising diagnostic evidence, not a replacement for the failed
+independent holdout or a permission to publish aggregate percentages.
+
+Polygon-constrained samples now replace the proxy points for the current
+calibration cycle. Their 16-case MARTA review also reached only 75% within 15
+minutes. Direct pedestrian routing (up to 5 km), a 5-km access/egress
+sensitivity run, and a fresh official GTFS download did not close that gap.
+The decision, evidence, and required source-supported next step are recorded
+in [`reports/transit_polygon_calibration_failure_20260914.md`](reports/transit_polygon_calibration_failure_20260914.md).
+The polygon and aggregate accessibility outputs therefore remain diagnostic,
+not publishable findings.
 
 ## Research motivation
 

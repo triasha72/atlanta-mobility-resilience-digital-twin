@@ -1,0 +1,2 @@
+completed_planner_cases,comparable_numeric_cases,model_no_arrival_with_planner_route,mean_absolute_difference_minutes,median_absolute_difference_minutes,share_within_15_minutes
+16,16,0,9.579166666666666,4.291666666666664,0.75

@@ -27,15 +27,16 @@ def planner_url(
     destination_label: str, destination_lat: float, destination_lon: float,
     service_date: str, departure: str,
 ) -> str:
-    """Build a public MARTA Tracker URL for the exact sampled map points."""
+    """Build a timestamped MARTA Rider Tools URL for sampled map points."""
     parameters = {
-        "from": f"{origin_label}::{origin_lat},{origin_lon}",
-        "to": f"{destination_label}::{destination_lat},{destination_lon}",
-        "depArr": "DEPART",
+        "from": f"{origin_lat},{origin_lon}::{origin_lat},{origin_lon}",
+        "to": f"{destination_lat},{destination_lon}::{destination_lat},{destination_lon}",
+        "depArr": "DEPART_AT",
         "date": f"{service_date[:4]}-{service_date[4:6]}-{service_date[6:]}",
         "time": departure,
+        "results": "true",
     }
-    return f"https://tracker.itsmarta.com/plan?{urlencode(parameters)}"
+    return f"https://itsmarta.com/ride/planner?{urlencode(parameters)}"
 
 
 def build_sample(
@@ -47,12 +48,14 @@ def build_sample(
     departure: str,
     sample_per_band: int,
     seed: int,
+    allow_empty_bands: bool = False,
 ) -> pd.DataFrame:
     """Return a fixed-size stratified sample with empty human-review fields."""
     required_od = {"origin_id", "destination_id", "travel_time_minutes"}
     if missing := required_od - set(od.columns):
         raise ValueError(f"OD input is missing required columns: {sorted(missing)}")
-    origins = origins.rename(columns={"geoid": "origin_id", "lat": "origin_lat", "lon": "origin_lon"})
+    origin_key = "geoid" if "geoid" in origins.columns else "id"
+    origins = origins.rename(columns={origin_key: "origin_id", "lat": "origin_lat", "lon": "origin_lon"})
     destinations = destinations.rename(
         columns={"id": "destination_id", "lat": "destination_lat", "lon": "destination_lon"}
     )
@@ -66,10 +69,13 @@ def build_sample(
     sampled = []
     for index, band in enumerate(order):
         candidates = merged[merged["model_time_band"] == band]
+        if candidates.empty and allow_empty_bands:
+            continue
         if len(candidates) < sample_per_band:
             raise ValueError(f"need {sample_per_band} rows in {band}, found {len(candidates)}")
         sampled.append(candidates.sample(n=sample_per_band, random_state=seed + index))
     result = pd.concat(sampled, ignore_index=True)
+    result.insert(0, "case_number", range(len(result)))
     result["origin_label"] = "ACS tract centroid"
     result["planner_url"] = result.apply(
         lambda row: planner_url(
@@ -90,6 +96,7 @@ def build_sample(
     result["reviewer"] = pd.NA
     result["reviewed_at"] = pd.NA
     columns = [
+        "case_number",
         "origin_id", "origin_lat", "origin_lon", "destination_id", "label", "category",
         "destination_lat", "destination_lon", "travel_time_minutes", "model_time_band",
         "planner_url", "planner_minutes", "planner_no_route", "planner_itinerary_notes",

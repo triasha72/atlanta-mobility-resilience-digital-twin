@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.1",
+  "purpose": "Frozen protocol for the MARTA schedule-router holdout validation.",
+  "calibration_review": {
+    "service_date": "20260914",
+    "departure": "08:00",
+    "cases": 20,
+    "source": "MARTA Rider Tools timestamped public URL"
+  },
+  "frozen_router_parameters": {
+    "origin_destination_walk_cap_meters": 2500,
+    "nearby_stop_transfer_walk_cap_meters": 250,
+    "walking_speed_kph": 4.8,
+    "transfer_penalty_minutes": 2
+  },
+  "holdout": {
+    "sample_per_nonempty_travel_time_band": 4,
+    "empty_bands_are_recorded_and_not_substituted": true,
+    "excludes_calibration_origin_destination_pairs": true,
+    "seed": 20260914
+  },
+  "publication_gate": {
+    "model_no_arrival_with_planner_route_max": 0,
+    "median_absolute_difference_minutes_max": 10,
+    "share_within_15_minutes_min": 0.8
+  },
+  "interpretation": "Passing this gate supports static-schedule accessibility reporting only; it does not validate real-time reliability, fares, capacity, or pedestrian barriers."
+}

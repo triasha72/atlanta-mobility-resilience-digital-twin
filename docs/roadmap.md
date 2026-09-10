@@ -33,8 +33,16 @@
 - [x] Generate a fixed-seed, 20-case manual validation sample and scorer.
 - [x] Complete the 20 documented MARTA planner checks and publish the routing
   gap they exposed. This is a schedule-model check, not an observed-trip study.
-- [ ] Add spatially indexed walking links between nearby stops, then rerun the
-  same 20-case comparison before publishing accessibility percentages.
+- [x] Add spatially indexed walking links between nearby stops and regenerate
+  the 07:00, 08:00, and 09:00 schedule runs.
+- [x] Recheck the fixed 20-case sample in MARTA's replacement Trip Planner at
+  the same 08:00 departure using timestamped public URLs.
+- [x] Check a separate holdout sample after the 2,500-metre access-walk
+  calibration; it failed the pre-registered 80% within-15-minute gate.
+- [ ] Diagnose the four long-trip holdout outliers and validate a revised
+  routing model on a new, independent polygon-origin holdout before publishing
+  percentages. Polygon calibration repeated the 75% within-15-minute failure;
+  direct-walk, wider-access, and refreshed-feed alternatives did not resolve it.
 - [ ] flood, heat, or severe-weather disruption layers
 - [ ] repeated simulations and uncertainty intervals
 
