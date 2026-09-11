@@ -255,6 +255,22 @@ in [`reports/transit_polygon_calibration_failure_20260914.md`](reports/transit_p
 The polygon and aggregate accessibility outputs therefore remain diagnostic,
 not publishable findings.
 
+### Realtime capture for a future same-time validation cycle
+
+MARTA officially publishes public bus GTFS-Realtime Trip Updates and Vehicle
+Positions. The feeds are point-in-time operational snapshots, not a historical
+schedule archive, so they cannot retroactively repair a static-versus-planner
+mismatch. Capture and checksum a snapshot for a same-time validation run with:
+
+```bash
+PYTHONPATH=src python3 scripts/capture_marta_gtfs_realtime.py \
+  --feed data/external/marta/tripupdates_YYYYMMDDTHHMMSSZ.pb \
+  --receipt reports/marta_tripupdates_receipt_YYYYMMDDTHHMMSSZ.json
+```
+
+Use the snapshot only for a query at the matching timestamp. The static GTFS
+schedule remains the reproducible basis for future-date accessibility runs.
+
 ## Research motivation
 
 Urban transportation networks can fail unevenly. A road closure may have limited impact on some neighborhoods but significantly reduce access to jobs, healthcare, or other destinations for others. This repository establishes a transparent baseline for measuring those differences and provides a foundation for later work in graph machine learning, GPU acceleration, multimodal transit disruption modeling, and synthetic mobility data.

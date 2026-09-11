@@ -43,6 +43,9 @@
   routing model on a new, independent polygon-origin holdout before publishing
   percentages. Polygon calibration repeated the 75% within-15-minute failure;
   direct-walk, wider-access, and refreshed-feed alternatives did not resolve it.
+- [x] Add checksummed capture of MARTA's official bus GTFS-Realtime Trip Updates
+  endpoint. It supports a future same-time validation cycle, but cannot
+  retrospectively resolve the fixed-date static-versus-planner mismatch.
 - [ ] flood, heat, or severe-weather disruption layers
 - [ ] repeated simulations and uncertainty intervals
 

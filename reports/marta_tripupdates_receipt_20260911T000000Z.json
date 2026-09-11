@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "dataset": "MARTA Bus GTFS-Realtime Trip Updates",
+  "source_url": "https://gtfs-rt.itsmarta.com/TMGTFSRealTimeWebService/tripupdate/tripupdates.pb",
+  "captured_at": "2026-09-11T17:27:25.047462+00:00",
+  "content_type": "application/protocol-buffer",
+  "payload_bytes": 819752,
+  "payload_sha256": "3f198fcb595b16ea28101f0ab11515a5d01a0118fa114c71fc9ffb2582d72ad1",
+  "scope": "point-in-time bus predictions; not a historical schedule archive"
+}
