@@ -54,10 +54,24 @@ versioned, CRS-declared hazard GeoJSON or GeoPackage, then configure a
 `flood_exposed_edges` scenario. This removes intersecting edges; it does not
 claim that those roads are actually closed.
 
+For a reproducible public FEMA NFHL subset, derive the GeoJSON directly from
+the road graph extent and retain its receipt before annotation:
+
+```bash
+PYTHONPATH=src python3 scripts/download_fema_nfhl.py \
+  --graph data/processed/atlanta_drive.graphml \
+  --output data/external/fema_nfhl_atlanta.geojson \
+  --receipt reports/fema_nfhl_atlanta_receipt.json
+```
+
+If a deliberately small test extent returns no polygons, use `--allow-empty`
+only to retain the result and receipt. Do not run `flood_exposed_edges` for an
+empty hazard subset.
+
 ```bash
 PYTHONPATH=src python3 scripts/annotate_flood_exposure.py \
   --graph data/processed/atlanta_drive.graphml \
-  --hazards data/external/flood_hazard.geojson \
+  --hazards data/external/fema_nfhl_atlanta.geojson \
   --output data/processed/atlanta_drive_flood_annotated.graphml
 ```
 

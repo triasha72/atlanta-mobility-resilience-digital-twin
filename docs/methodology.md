@@ -37,6 +37,11 @@ edges. The result is a transparent hazard-overlay sensitivity scenario, not a
 forecast, a statement of road closure, or a substitute for an agency closure
 feed.
 
+`scripts/download_fema_nfhl.py` can retrieve the official FEMA NFHL flood
+hazard-area layer for the WGS84 graph extent using an ArcGIS REST spatial query.
+It saves the exact query URL, timestamp, feature count, and response checksum
+in a receipt so the selected hazard source can be audited later.
+
 ## Core outcomes
 
 - reachable OD share
