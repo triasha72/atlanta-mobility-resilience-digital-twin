@@ -3,6 +3,7 @@ import pandas as pd
 from scripts.create_proxy_calibration_sample import exclude_prior_tract_destination_pairs
 from scripts.create_transit_holdout_sample import build_holdout
 from scripts.create_transit_validation_sample import build_sample
+from scripts.record_manual_validation import parse_planner_outcomes
 from scripts.score_transit_validation import passes_publication_gate, score_completed_checks
 
 
@@ -94,3 +95,9 @@ def test_proxy_calibration_excludes_prior_tract_pair_for_every_proxy() -> None:
     prior = pd.DataFrame({"origin_id": ["o1"], "destination_id": ["d"]})
     remaining = exclude_prior_tract_destination_pairs(od, prior)
     assert remaining.origin_id.tolist() == ["o2::north"]
+
+
+def test_manual_outcomes_support_numeric_routes_and_no_route() -> None:
+    minutes, no_route = parse_planner_outcomes("17.5,no_route,29", expected_count=3)
+    assert minutes == [17.5, None, 29.0]
+    assert no_route == [False, True, False]

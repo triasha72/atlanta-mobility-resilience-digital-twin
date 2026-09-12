@@ -9,27 +9,49 @@ from pathlib import Path
 import pandas as pd
 
 
+def parse_planner_outcomes(values: str, expected_count: int) -> tuple[list[float | None], list[bool]]:
+    """Parse ordered planner durations, allowing `no_route` for an empty result."""
+    tokens = [value.strip() for value in values.split(",")]
+    if len(tokens) != expected_count:
+        raise ValueError(f"received {len(tokens)} outcomes for {expected_count} cases")
+    minutes: list[float | None] = []
+    no_route: list[bool] = []
+    for token in tokens:
+        if token.lower() in {"no_route", "no-route", "none"}:
+            minutes.append(None)
+            no_route.append(True)
+            continue
+        try:
+            duration = float(token)
+        except ValueError as error:
+            raise ValueError(f"invalid planner outcome: {token!r}") from error
+        if duration <= 0:
+            raise ValueError("planner durations must be positive")
+        minutes.append(duration)
+        no_route.append(False)
+    return minutes, no_route
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument(
-        "--planner-minutes",
+        "--planner-outcomes",
         required=True,
-        help="Comma-separated durations, ordered exactly as the input CSV rows.",
+        help="Comma-separated durations or no_route, ordered exactly as the input CSV rows.",
     )
     parser.add_argument("--reviewer", default="MARTA public trip planner")
     args = parser.parse_args()
 
     frame = pd.read_csv(args.input)
-    values = [float(value) for value in args.planner_minutes.split(",")]
-    if len(values) != len(frame):
-        raise ValueError(f"received {len(values)} durations for {len(frame)} cases")
-    if (pd.Series(values) <= 0).any():
-        raise ValueError("planner durations must be positive")
+    values, no_route = parse_planner_outcomes(args.planner_outcomes, len(frame))
 
     frame["planner_minutes"] = values
-    frame["planner_no_route"] = False
-    frame["planner_itinerary_notes"] = "First displayed public planner itinerary"
+    frame["planner_no_route"] = no_route
+    frame["planner_itinerary_notes"] = [
+        "No public planner itinerary returned" if result else "First displayed public planner itinerary"
+        for result in no_route
+    ]
     frame["reviewer"] = args.reviewer
     frame["reviewed_at"] = datetime.now(UTC).isoformat()
     frame.to_csv(args.input, index=False)

@@ -51,7 +51,16 @@ def review_is_complete(sample: pd.DataFrame, reviewed: pd.DataFrame) -> bool:
     if sample_pairs != reviewed_pairs or len(reviewed) != len(sample):
         raise ValueError("review must contain each fresh holdout pair exactly once")
     numeric = reviewed["planner_minutes"].notna()
-    no_route = reviewed["planner_no_route"].fillna(False).astype(bool)
+    def parse_no_route(value: object) -> bool | None:
+        if value is True or value == 1 or value in {"true", "True"}:
+            return True
+        if value is False or value == 0 or value in {"false", "False"}:
+            return False
+        return None
+
+    no_route = reviewed["planner_no_route"].map(parse_no_route)
+    if no_route.isna().any():
+        raise ValueError("planner_no_route must be true or false")
     if (numeric == no_route).any():
         raise ValueError("each reviewed case needs either planner_minutes or planner_no_route")
     if reviewed["reviewed_at"].isna().any():

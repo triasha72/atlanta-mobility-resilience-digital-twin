@@ -173,6 +173,17 @@ This comparison is a diagnostic for schedule and walking assumptions. It is not
 a rider survey, a real-time reliability study, or a substitute for observed
 travel-time data.
 
+To record an ordered review without editing the CSV by hand, supply a positive
+duration for each returned itinerary and `no_route` for a planner result with
+no itinerary. The count must match the CSV rows exactly:
+
+```bash
+PYTHONPATH=src python3 scripts/record_manual_validation.py \
+  --input outputs/transit_polygon_same_time_holdout_20260914T120000Z.csv \
+  --planner-outcomes 34,no_route,52.5 \
+  --reviewer "MARTA Rider Tools"
+```
+
 ### Independent holdout and publication gate
 
 The calibrated router parameters and pre-registered holdout gate are frozen in
