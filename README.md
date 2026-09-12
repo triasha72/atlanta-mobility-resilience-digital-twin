@@ -271,6 +271,20 @@ PYTHONPATH=src python3 scripts/capture_marta_gtfs_realtime.py \
 Use the snapshot only for a query at the matching timestamp. The static GTFS
 schedule remains the reproducible basis for future-date accessibility runs.
 
+For a source-aligned validation cycle, this one command captures both official
+feeds, recomputes polygon-origin OD times, and creates a fresh tract-pair-
+disjoint holdout. Complete the public Planner checks in the generated CSV
+before applying the publication gate:
+
+```bash
+PYTHONPATH=src python3 scripts/prepare_same_time_transit_validation.py \
+  --service-date 20260914 --departure 08:00 --run-id 20260914T120000Z \
+  --prior reports/transit_network_calibration_cases_2500m_20260914.csv \
+          reports/transit_validation_holdout_cases_20260914.csv \
+          reports/transit_proxy_calibration_cases_20260914.csv \
+          reports/transit_polygon_calibration_cases_20260914.csv
+```
+
 ## Research motivation
 
 Urban transportation networks can fail unevenly. A road closure may have limited impact on some neighborhoods but significantly reduce access to jobs, healthcare, or other destinations for others. This repository establishes a transparent baseline for measuring those differences and provides a foundation for later work in graph machine learning, GPU acceleration, multimodal transit disruption modeling, and synthetic mobility data.
