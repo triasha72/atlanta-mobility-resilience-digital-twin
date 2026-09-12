@@ -46,6 +46,8 @@
 - [x] Add checksummed capture of MARTA's official bus GTFS-Realtime Trip Updates
   endpoint. It supports a future same-time validation cycle, but cannot
   retrospectively resolve the fixed-date static-versus-planner mismatch.
+- [x] Add a receipt-verifying finalizer that refuses incomplete or altered
+  same-time holdouts before applying the pre-registered publication gate.
 - [ ] flood, heat, or severe-weather disruption layers
 - [ ] repeated simulations and uncertainty intervals
 

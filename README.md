@@ -285,6 +285,19 @@ PYTHONPATH=src python3 scripts/prepare_same_time_transit_validation.py \
           reports/transit_polygon_calibration_cases_20260914.csv
 ```
 
+After recording every generated pair, verify the static and realtime checksums
+and apply the gate in one step. This refuses partial reviews, duplicate pairs,
+or altered source snapshots:
+
+```bash
+PYTHONPATH=src python3 scripts/finalize_same_time_transit_validation.py \
+  --manifest reports/transit_same_time_validation_manifest_20260914T120000Z.json \
+  --reviewed outputs/transit_polygon_same_time_holdout_20260914T120000Z.csv \
+  --summary-output reports/transit_same_time_validation_summary_20260914T120000Z.csv \
+  --cases-output reports/transit_same_time_validation_cases_20260914T120000Z.csv \
+  --gate-output reports/transit_same_time_validation_gate_20260914T120000Z.csv
+```
+
 ## Research motivation
 
 Urban transportation networks can fail unevenly. A road closure may have limited impact on some neighborhoods but significantly reduce access to jobs, healthcare, or other destinations for others. This repository establishes a transparent baseline for measuring those differences and provides a foundation for later work in graph machine learning, GPU acceleration, multimodal transit disruption modeling, and synthetic mobility data.
