@@ -49,7 +49,7 @@
 - [x] Add a receipt-verifying finalizer that refuses incomplete or altered
   same-time holdouts before applying the pre-registered publication gate.
 - [ ] flood, heat, or severe-weather disruption layers
-- [ ] repeated simulations and uncertainty intervals
+- [x] repeated random-closure simulations and empirical uncertainty intervals
 
 ## Version 3: NVIDIA-facing technical extension
 

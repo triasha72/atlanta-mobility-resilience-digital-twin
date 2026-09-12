@@ -17,6 +17,8 @@ scenarios:
   - name: random_10_edge_closure
     type: random_edges
     n_edges: 10
+    # Set above 1 to model independently sampled closure ensembles.
+    replicates: 1
   - name: high_betweenness_10_edge_closure
     type: high_betweenness_edges
     n_edges: 10

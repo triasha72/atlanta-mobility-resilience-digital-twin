@@ -42,6 +42,13 @@ through every completed accessibility scenario with deterministic Monte Carlo
 draws. It reports the mean and 5th/95th percentiles instead of treating each
 tract population estimate as exact.
 
+Random closure experiments can also use a deterministic ensemble by setting
+`replicates` above one on a `random_edges` scenario. The pipeline writes one
+result per sampled closure and `outputs/scenario_uncertainty_intervals.csv`
+with empirical mean, 5th, and 95th percentiles across the ensemble. These
+intervals reflect simulated closure selection only, not real-world traffic
+uncertainty.
+
 The text-only evidence record is
 [`artifacts/atlanta_demo_v1.json`](artifacts/atlanta_demo_v1.json). It includes
 the public OSM/ODbL source, study boundary, graph and config hashes, scenario

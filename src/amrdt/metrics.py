@@ -44,3 +44,31 @@ def compare_with_baseline(summary: pd.DataFrame) -> pd.DataFrame:
     ):
         result[f"delta_{column}"] = result[column] - baseline_row[column]
     return result
+
+
+def scenario_uncertainty_intervals(summary: pd.DataFrame) -> pd.DataFrame:
+    """Summarize repeated scenario outcomes with empirical 5th/95th percentiles."""
+    required = {
+        "scenario_family",
+        "reachable_od_share",
+        "mean_reachable_travel_time_minutes",
+        "mean_accessible_opportunities",
+        "weighted_accessible_opportunities",
+    }
+    missing = required.difference(summary.columns)
+    if missing:
+        raise ValueError(f"summary is missing columns: {sorted(missing)}")
+    metrics = sorted(required - {"scenario_family"})
+    rows: list[dict[str, float | int | str]] = []
+    for family, group in summary.groupby("scenario_family", sort=True):
+        row: dict[str, float | int | str] = {
+            "scenario_family": str(family),
+            "simulations": len(group),
+        }
+        for metric in metrics:
+            values = group[metric]
+            row[f"{metric}_mean"] = float(values.mean())
+            row[f"{metric}_p05"] = float(values.quantile(0.05))
+            row[f"{metric}_p95"] = float(values.quantile(0.95))
+        rows.append(row)
+    return pd.DataFrame(rows)

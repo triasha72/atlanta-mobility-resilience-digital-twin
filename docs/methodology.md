@@ -21,6 +21,13 @@ Version 1 is a **road-network resilience simulation prototype**, not a calibrate
 - `random_edges`: removes a random set of directed road edges.
 - `high_betweenness_edges`: removes edges connecting node pairs ranked highly by travel-time-weighted edge betweenness.
 
+Set `replicates` on a `random_edges` scenario to sample an independent,
+deterministically seeded closure ensemble. The pipeline retains one OD and
+accessibility file per replicate and writes empirical mean, 5th-percentile,
+and 95th-percentile intervals to `scenario_uncertainty_intervals.csv`.
+These describe variation across simulated edge selections, not confidence
+intervals for observed traffic conditions.
+
 ## Core outcomes
 
 - reachable OD share

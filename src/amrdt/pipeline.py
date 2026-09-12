@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from amrdt.accessibility import compute_od_matrix, summarize_accessibility
-from amrdt.metrics import compare_with_baseline, scenario_summary
+from amrdt.metrics import compare_with_baseline, scenario_summary, scenario_uncertainty_intervals
 from amrdt.network import graph_summary, load_or_download_graph, nearest_nodes
 from amrdt.provenance import write_run_manifest
 from amrdt.scenarios import apply_scenario
@@ -55,50 +55,61 @@ def run_pipeline(config: dict) -> pd.DataFrame:
     all_summaries: list[dict] = []
 
     for position, scenario in enumerate(config["scenarios"]):
-        result = apply_scenario(
-            graph,
-            scenario,
-            random_seed=random_seed + position,
-        )
+        repetitions = int(scenario.get("replicates", 1))
+        if repetitions < 1:
+            raise ValueError("scenario replicates must be positive")
+        if scenario["type"] != "random_edges" and repetitions != 1:
+            raise ValueError("only random_edges scenarios may use replicates")
+        for replicate in range(repetitions):
+            instance_name = scenario["name"]
+            if repetitions > 1:
+                instance_name = f"{instance_name}__replicate_{replicate + 1:03d}"
+            instance = {**scenario, "name": instance_name}
+            result = apply_scenario(
+                graph,
+                instance,
+                random_seed=random_seed + position * 10_000 + replicate,
+            )
 
-        od_matrix = compute_od_matrix(
-            result.graph,
-            origin_nodes=origin_nodes,
-            destination_nodes=destination_nodes,
-            weight=config["routing"].get("weight", "travel_time"),
-        )
+            od_matrix = compute_od_matrix(
+                result.graph,
+                origin_nodes=origin_nodes,
+                destination_nodes=destination_nodes,
+                weight=config["routing"].get("weight", "travel_time"),
+            )
 
-        access = summarize_accessibility(
-            od_matrix,
-            origins=config["origins"],
-            destinations=config["destinations"],
-            threshold_minutes=threshold,
-        )
+            access = summarize_accessibility(
+                od_matrix,
+                origins=config["origins"],
+                destinations=config["destinations"],
+                threshold_minutes=threshold,
+            )
 
-        od_matrix.to_csv(
-            output_dir / f"od_{result.name}.csv",
-            index=False,
-        )
+            od_matrix.to_csv(
+                output_dir / f"od_{result.name}.csv",
+                index=False,
+            )
 
-        access.to_csv(
-            output_dir / f"accessibility_{result.name}.csv",
-            index=False,
-        )
+            access.to_csv(
+                output_dir / f"accessibility_{result.name}.csv",
+                index=False,
+            )
 
-        plot_disrupted_edges(
-            graph,
-            result.removed_edges,
-            figure_dir / f"{result.name}_affected_nodes.png",
-        )
+            plot_disrupted_edges(
+                graph,
+                result.removed_edges,
+                figure_dir / f"{result.name}_affected_nodes.png",
+            )
 
-        all_summaries.append(
-            scenario_summary(
+            record = scenario_summary(
                 scenario_name=result.name,
                 od_matrix=od_matrix,
                 accessibility=access,
                 removed_edge_count=len(result.removed_edges),
             )
-        )
+            record["scenario_family"] = scenario["name"]
+            record["replicate"] = replicate + 1
+            all_summaries.append(record)
 
     summary = compare_with_baseline(pd.DataFrame(all_summaries))
 
@@ -108,6 +119,10 @@ def run_pipeline(config: dict) -> pd.DataFrame:
 
     summary.to_csv(
         output_dir / "scenario_summary.csv",
+        index=False,
+    )
+    scenario_uncertainty_intervals(summary).to_csv(
+        output_dir / "scenario_uncertainty_intervals.csv",
         index=False,
     )
 
