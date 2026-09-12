@@ -64,6 +64,14 @@ PYTHONPATH=src python3 scripts/download_fema_nfhl.py \
   --receipt reports/fema_nfhl_atlanta_receipt.json
 ```
 
+The committed `configs/v1_atlanta_tract_study.yaml` defines the reproducible
+12-km downtown road study area covering all 50 selected tract origins. Its
+baseline, five random 10-edge closures, and targeted closure can be run with:
+
+```bash
+PYTHONPATH=src python3 -m amrdt.cli run --config configs/v1_atlanta_tract_study.yaml
+```
+
 If a deliberately small test extent returns no polygons, use `--allow-empty`
 only to retain the result and receipt. Do not run `flood_exposed_edges` for an
 empty hazard subset.

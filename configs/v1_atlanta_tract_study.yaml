@@ -1,0 +1,34 @@
+project:
+  name: Atlanta tract-access road resilience study
+  version: 1.0.0
+  random_seed: 20260912
+
+study_area:
+  # Covers every selected tract representative point (all are within 10 km).
+  center_lat: 33.7580
+  center_lon: -84.3880
+  dist_meters: 12000
+  network_type: "drive"
+
+routing:
+  weight: "travel_time"
+  max_travel_time_minutes: 30
+
+scenarios:
+  - name: baseline
+    type: baseline
+  - name: random_10_edge_closure
+    type: random_edges
+    n_edges: 10
+    replicates: 5
+  - name: high_betweenness_10_edge_closure
+    type: high_betweenness_edges
+    n_edges: 10
+
+origins_file: "../data/processed/acs_tract_origins.csv"
+destinations_file: "../data/processed/osm_essential_destinations.csv"
+
+paths:
+  graph_file: "data/processed/atlanta_tract_study_drive.graphml"
+  output_dir: "outputs/atlanta_tract_study_road"
+  figure_dir: "figures/atlanta_tract_study_road"
