@@ -285,7 +285,9 @@ schedule remains the reproducible basis for future-date accessibility runs.
 For a source-aligned validation cycle, this one command captures both official
 feeds, recomputes polygon-origin OD times, and creates a fresh tract-pair-
 disjoint holdout. Complete the public Planner checks in the generated CSV
-before applying the publication gate:
+before applying the publication gate. Run it on the requested service date
+within 15 minutes of the local departure; the command refuses an early or
+stale capture unless explicitly marked diagnostic-only:
 
 ```bash
 PYTHONPATH=src python3 scripts/prepare_same_time_transit_validation.py \

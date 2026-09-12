@@ -25,6 +25,7 @@ def test_verify_sources_checks_both_captured_feeds(tmp_path: Path) -> None:
         json.dumps({"payload_sha256": hashlib.sha256(b"realtime").hexdigest()})
     )
     verify_sources(root, {
+        "source_aligned": True,
         "static_gtfs_receipt": "reports/marta_gtfs_receipt_run.json",
         "realtime_trip_updates_receipt": "reports/marta_tripupdates_receipt_run.json",
     })
@@ -39,3 +40,8 @@ def test_review_must_cover_every_pair_once_and_have_a_disposition() -> None:
     assert review_is_complete(sample, reviewed)
     with pytest.raises(ValueError, match="exactly once"):
         review_is_complete(sample, reviewed.iloc[:1])
+
+
+def test_diagnostic_capture_cannot_pass_the_publication_gate(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="source-aligned"):
+        verify_sources(tmp_path, {"source_aligned": False})

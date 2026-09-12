@@ -26,6 +26,8 @@ def sha256_file(path: Path) -> str:
 
 def verify_sources(root: Path, manifest: dict[str, object]) -> None:
     """Check captured artifacts still agree with their immutable receipts."""
+    if manifest.get("source_aligned") is not True:
+        raise ValueError("publication gate requires a source-aligned capture")
     static_receipt_path = root / str(manifest["static_gtfs_receipt"])
     realtime_receipt_path = root / str(manifest["realtime_trip_updates_receipt"])
     static_receipt = json.loads(static_receipt_path.read_text(encoding="utf-8"))

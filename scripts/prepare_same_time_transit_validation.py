@@ -9,6 +9,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -27,6 +28,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct script execution only
 
 
 MARTA_STATIC_GTFS_URL = "https://itsmarta.com/google_transit_feed/google_transit.zip"
+MARTA_TIMEZONE = ZoneInfo("America/New_York")
 
 
 def output_paths(root: Path, run_id: str) -> dict[str, Path]:
@@ -40,6 +42,17 @@ def output_paths(root: Path, run_id: str) -> dict[str, Path]:
         "sample": root / "outputs" / f"transit_polygon_same_time_holdout_{run_id}.csv",
         "manifest": root / "reports" / f"transit_same_time_validation_manifest_{run_id}.json",
     }
+
+
+def capture_is_source_aligned(
+    captured_at: datetime, service_date: str, departure: str, window_minutes: int
+) -> bool:
+    """Return whether capture occurred near the modeled local MARTA departure."""
+    expected = datetime.strptime(f"{service_date} {departure}", "%Y%m%d %H:%M").replace(
+        tzinfo=MARTA_TIMEZONE
+    )
+    local_capture = captured_at.astimezone(MARTA_TIMEZONE)
+    return abs((local_capture - expected).total_seconds()) <= window_minutes * 60
 
 
 def download(url: str, path: Path, *, accept: str | None = None) -> tuple[bytes, str | None]:
@@ -65,10 +78,29 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--prior", type=Path, nargs="+", required=True)
     parser.add_argument("--seed", type=int, default=20260917)
+    parser.add_argument(
+        "--capture-window-minutes", type=int, default=15,
+        help="Maximum allowed distance from local departure for a source-aligned capture.",
+    )
+    parser.add_argument(
+        "--allow-outside-window", action="store_true",
+        help="Create an explicitly non-source-aligned diagnostic run outside the capture window.",
+    )
     args = parser.parse_args()
+    if args.capture_window_minutes < 0:
+        raise ValueError("capture window must be non-negative")
     root = args.root.resolve()
     paths = output_paths(root, args.run_id)
-    captured_at = datetime.now(UTC).isoformat()
+    captured_at_datetime = datetime.now(UTC)
+    source_aligned = capture_is_source_aligned(
+        captured_at_datetime, args.service_date, args.departure, args.capture_window_minutes
+    )
+    if not source_aligned and not args.allow_outside_window:
+        raise ValueError(
+            "capture is outside the source-alignment window; run near the requested MARTA "
+            "departure or pass --allow-outside-window for a diagnostic-only run"
+        )
+    captured_at = captured_at_datetime.isoformat()
 
     download(MARTA_STATIC_GTFS_URL, paths["static_feed"])
     static_receipt = audit_gtfs_feed(paths["static_feed"], source_url=MARTA_STATIC_GTFS_URL)
@@ -111,13 +143,20 @@ def main() -> int:
     manifest = {
         "schema_version": "1.0",
         "captured_at": captured_at,
+        "captured_at_marta": captured_at_datetime.astimezone(MARTA_TIMEZONE).isoformat(),
         "service_date": args.service_date,
         "departure": args.departure,
+        "capture_window_minutes": args.capture_window_minutes,
+        "source_aligned": source_aligned,
         "static_gtfs_receipt": str(paths["static_receipt"].relative_to(root)),
         "realtime_trip_updates_receipt": str(paths["realtime_receipt"].relative_to(root)),
         "fresh_holdout_sample": str(paths["sample"].relative_to(root)),
         "planner_review_required": True,
-        "publication_gate": "not evaluated until same-time Planner review is recorded",
+        "publication_gate": (
+            "not evaluated until same-time Planner review is recorded"
+            if source_aligned
+            else "not eligible: capture was explicitly outside the source-alignment window"
+        ),
     }
     paths["manifest"].write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(f"prepared {len(sample)} fresh holdout cases in {paths['sample']}")
