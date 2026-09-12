@@ -48,7 +48,8 @@
   retrospectively resolve the fixed-date static-versus-planner mismatch.
 - [x] Add a receipt-verifying finalizer that refuses incomplete or altered
   same-time holdouts before applying the pre-registered publication gate.
-- [ ] flood, heat, or severe-weather disruption layers
+- [x] reproducible flood-hazard edge-overlay disruption layer (requires a
+  versioned, CRS-declared hazard dataset for a study run)
 - [x] repeated random-closure simulations and empirical uncertainty intervals
 
 ## Version 3: NVIDIA-facing technical extension

@@ -73,6 +73,15 @@ def apply_scenario(
         selected_pairs = ranked_pairs[:n_edges]
         removed = _edges_for_pairs(disrupted, selected_pairs)
 
+    elif scenario_type == "flood_exposed_edges":
+        removed = [
+            (u, v, key)
+            for u, v, key, data in disrupted.edges(keys=True, data=True)
+            if str(data.get("flood_exposed", "")).lower() in {"true", "1"}
+        ]
+        if not removed:
+            raise ValueError("flood_exposed_edges requires a graph with exposed edges")
+
     else:
         raise ValueError(f"Unsupported scenario type: {scenario_type}")
 

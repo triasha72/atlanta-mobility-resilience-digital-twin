@@ -49,6 +49,18 @@ with empirical mean, 5th, and 95th percentiles across the ensemble. These
 intervals reflect simulated closure selection only, not real-world traffic
 uncertainty.
 
+For a flood-overlay sensitivity scenario, annotate a cached road graph with a
+versioned, CRS-declared hazard GeoJSON or GeoPackage, then configure a
+`flood_exposed_edges` scenario. This removes intersecting edges; it does not
+claim that those roads are actually closed.
+
+```bash
+PYTHONPATH=src python3 scripts/annotate_flood_exposure.py \
+  --graph data/processed/atlanta_drive.graphml \
+  --hazards data/external/flood_hazard.geojson \
+  --output data/processed/atlanta_drive_flood_annotated.graphml
+```
+
 The text-only evidence record is
 [`artifacts/atlanta_demo_v1.json`](artifacts/atlanta_demo_v1.json). It includes
 the public OSM/ODbL source, study boundary, graph and config hashes, scenario

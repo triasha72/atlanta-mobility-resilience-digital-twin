@@ -28,6 +28,15 @@ and 95th-percentile intervals to `scenario_uncertainty_intervals.csv`.
 These describe variation across simulated edge selections, not confidence
 intervals for observed traffic conditions.
 
+## Flood-exposure scenarios
+
+`scripts/annotate_flood_exposure.py` overlays a user-supplied, CRS-declared
+flood-hazard GeoJSON or GeoPackage on the cached road graph and labels every
+intersecting directed edge. A `flood_exposed_edges` scenario then removes those
+edges. The result is a transparent hazard-overlay sensitivity scenario, not a
+forecast, a statement of road closure, or a substitute for an agency closure
+feed.
+
 ## Core outcomes
 
 - reachable OD share
