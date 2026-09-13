@@ -30,12 +30,20 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    nvidia_smi = subprocess.run(["nvidia-smi", "--query-gpu=name,driver_version,memory.total", "--format=csv,noheader"], capture_output=True, text=True, check=False)
+    try:
+        nvidia_smi = subprocess.run(
+            ["nvidia-smi", "--query-gpu=name,driver_version,memory.total", "--format=csv,noheader"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        nvidia_smi = None
     payload = {
         "schema_version": "1.0", "captured_at": datetime.now(UTC).isoformat(), "platform": platform.platform(),
         "cugraph_available": importlib.util.find_spec("cugraph") is not None,
-        "cuda_runtime_available": nvidia_smi.returncode == 0,
-        "nvidia_smi": nvidia_smi.stdout.strip() if nvidia_smi.returncode == 0 else None,
+        "cuda_runtime_available": nvidia_smi is not None and nvidia_smi.returncode == 0,
+        "nvidia_smi": nvidia_smi.stdout.strip() if nvidia_smi and nvidia_smi.returncode == 0 else None,
         **optional_torch_details(),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
