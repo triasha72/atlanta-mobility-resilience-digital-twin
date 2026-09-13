@@ -44,7 +44,16 @@ def main() -> int:
     setup_start = time.perf_counter()
     gpu_edges = cudf.from_pandas(edge_table)
     gpu_graph = cugraph.Graph(directed=True)
-    gpu_graph.from_cudf_edgelist(gpu_edges, source="source", destination="target", edge_attr="weight", renumber=False)
+    # OSM node identifiers are sparse, large integers. cuGraph must compact
+    # them to [0, V) rather than allocating arrays indexed by their raw value.
+    # cuGraph's public shortest-path API accepts and returns external IDs.
+    gpu_graph.from_cudf_edgelist(
+        gpu_edges,
+        source="source",
+        destination="target",
+        edge_attr="weight",
+        renumber=True,
+    )
     graph_setup_seconds = time.perf_counter() - setup_start
 
     routing_start = time.perf_counter()
@@ -62,6 +71,7 @@ def main() -> int:
         "nodes": graph.number_of_nodes(),
         "input_edges": graph.number_of_edges(),
         "coalesced_edges": len(edge_table),
+        "vertex_ids_renumbered": bool(gpu_graph.is_renumbered()),
         "origins": len(origin_nodes),
         "destinations": len(destination_nodes),
         "od_pairs": len(origin_nodes) * len(destination_nodes),
