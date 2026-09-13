@@ -67,6 +67,17 @@ PYTHONPATH=src python3 scripts/generate_synthetic_od_demand.py \
   --utility-output reports/synthetic_od_demand_utility.csv
 ```
 
+Test whether those aggregate weights preserve a road-scenario conclusion (this
+does not validate the demand against observed trips):
+
+```bash
+PYTHONPATH=src python3 scripts/evaluate_synthetic_demand_resilience.py \
+  --demand outputs/synthetic_od_demand.csv \
+  --baseline outputs/atlanta_tract_study_flood/od_baseline.csv \
+  --scenario outputs/atlanta_tract_study_flood/od_fema_nfhl_special_flood_hazard_area_closure.csv \
+  --output reports/synthetic_demand_flood_resilience_20260912.csv
+```
+
 Measure CPU routing performance and whether the runtime supports cuGraph with:
 
 ```bash

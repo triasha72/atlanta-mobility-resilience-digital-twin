@@ -65,4 +65,5 @@
 
 - [x] aggregate-only synthetic OD-demand generation
 - [x] public-margin utility evaluation for synthetic OD demand
-- [ ] test whether synthetic demand preserves resilience conclusions
+- [x] test whether aggregate synthetic demand preserves the FEMA-overlay
+  resilience conclusion (not a validation against observed demand)

@@ -44,3 +44,31 @@ def margin_utility(demand: pd.DataFrame, origins: pd.DataFrame, destinations: pd
         "origin_margin_total_variation": 0.5 * (synthetic_origin.reindex(expected_origin.index, fill_value=0) - expected_origin).abs().sum(),
         "destination_margin_total_variation": 0.5 * (synthetic_destination.reindex(expected_destination.index, fill_value=0) - expected_destination).abs().sum(),
     }])
+
+
+def resilience_conclusion(demand: pd.DataFrame, baseline: pd.DataFrame, scenario: pd.DataFrame) -> pd.DataFrame:
+    """Score one scenario with aggregate synthetic OD weights, without claiming observed demand."""
+    keys = ["origin_id", "destination_id"]
+    required = set(keys + ["synthetic_trip_count"])
+    if missing := required.difference(demand.columns):
+        raise ValueError(f"demand is missing columns: {sorted(missing)}")
+    for name, matrix in (("baseline", baseline), ("scenario", scenario)):
+        if missing := set(keys + ["travel_time_seconds", "reachable"]).difference(matrix.columns):
+            raise ValueError(f"{name} is missing columns: {sorted(missing)}")
+    joined = demand.merge(baseline[keys + ["travel_time_seconds", "reachable"]], on=keys, how="left")
+    joined = joined.merge(scenario[keys + ["travel_time_seconds", "reachable"]], on=keys, how="left", suffixes=("_baseline", "_scenario"))
+    if joined[["reachable_baseline", "reachable_scenario"]].isna().any().any():
+        raise ValueError("OD matrices must cover every synthetic-demand pair")
+    total = float(joined["synthetic_trip_count"].sum())
+    result: dict[str, float] = {"synthetic_trip_count": total}
+    for label in ("baseline", "scenario"):
+        reachable = joined[f"reachable_{label}"].astype(bool)
+        weights = joined.loc[reachable, "synthetic_trip_count"]
+        result[f"{label}_reachable_trip_share"] = float(weights.sum() / total)
+        result[f"{label}_mean_reachable_minutes"] = float(
+            (joined.loc[reachable, "travel_time_seconds_" + label] * weights).sum() / weights.sum() / 60
+        )
+    result["reachable_trip_share_change_pp"] = 100 * (
+        result["scenario_reachable_trip_share"] - result["baseline_reachable_trip_share"]
+    )
+    return pd.DataFrame([result])
