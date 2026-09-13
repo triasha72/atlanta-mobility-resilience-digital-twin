@@ -49,6 +49,11 @@ with empirical mean, 5th, and 95th percentiles across the ensemble. These
 intervals reflect simulated closure selection only, not real-world traffic
 uncertainty.
 
+The completed tract-scale road/flood sensitivity study is documented in
+[`reports/atlanta_tract_road_flood_study_20260912.md`](reports/atlanta_tract_road_flood_study_20260912.md).
+It uses the FEMA special-flood-hazard-area overlay as a reproducible stress
+test, not as evidence of an observed road closure.
+
 For a flood-overlay sensitivity scenario, annotate a cached road graph with a
 versioned, CRS-declared hazard GeoJSON or GeoPackage, then configure a
 `flood_exposed_edges` scenario. This removes intersecting edges; it does not
@@ -72,9 +77,16 @@ baseline, five random 10-edge closures, and targeted closure can be run with:
 PYTHONPATH=src python3 -m amrdt.cli run --config configs/v1_atlanta_tract_study.yaml
 ```
 
+After generating the FEMA-annotated graph, run the paired baseline-versus-flood
+comparison with `configs/v1_atlanta_tract_flood_study.yaml`.
+
 If a deliberately small test extent returns no polygons, use `--allow-empty`
 only to retain the result and receipt. Do not run `flood_exposed_edges` for an
 empty hazard subset.
+
+The downloader first requests all matching FEMA object IDs and retrieves them
+in bounded batches, so an ArcGIS page-size limit cannot silently truncate the
+study hazard layer.
 
 ```bash
 PYTHONPATH=src python3 scripts/annotate_flood_exposure.py \

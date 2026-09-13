@@ -32,6 +32,19 @@ def test_baseline_does_not_change_graph() -> None:
     assert result.removed_edges == []
 
 
+def test_sampled_betweenness_scenario_is_reproducible() -> None:
+    graph = make_graph()
+    scenario = {
+        "name": "centrality",
+        "type": "high_betweenness_edges",
+        "n_edges": 1,
+        "betweenness_sample_nodes": 2,
+    }
+    assert apply_scenario(graph, scenario, random_seed=8).removed_edges == apply_scenario(
+        graph, scenario, random_seed=8
+    ).removed_edges
+
+
 def test_flood_scenario_removes_only_annotated_edges() -> None:
     graph = make_graph()
     graph[1][2][0]["flood_exposed"] = True

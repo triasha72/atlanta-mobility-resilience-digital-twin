@@ -1,6 +1,6 @@
 import json
 
-from scripts.download_fema_nfhl import nfhl_query_url, receipt
+from scripts.download_fema_nfhl import nfhl_query_parameters, nfhl_query_url, receipt
 
 
 def test_nfhl_query_is_a_geojson_intersection_request() -> None:
@@ -8,6 +8,14 @@ def test_nfhl_query_is_a_geojson_intersection_request() -> None:
     assert "MapServer/28/query" in url
     assert "f=geojson" in url
     assert "SFHA_TF" in url
+
+
+def test_nfhl_parameters_request_object_ids_for_complete_paging() -> None:
+    parameters = nfhl_query_parameters(
+        {"xmin": -84.4, "ymin": 33.7, "xmax": -84.3, "ymax": 33.8}, "SFHA_TF = 'T'"
+    )
+    assert parameters["outFields"].startswith("OBJECTID")
+    assert parameters["returnGeometry"] == "true"
 
 
 def test_nfhl_receipt_checksums_payload() -> None:

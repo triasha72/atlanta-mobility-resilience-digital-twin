@@ -7,6 +7,7 @@ from collections.abc import Iterable
 import networkx as nx
 from shapely.geometry import LineString
 from shapely.geometry.base import BaseGeometry
+from shapely.strtree import STRtree
 
 
 def _edge_geometry(graph: nx.MultiDiGraph, u: object, v: object, data: dict) -> BaseGeometry:
@@ -23,8 +24,9 @@ def annotate_exposed_edges(
     hazards = [geometry for geometry in hazard_geometries if not geometry.is_empty]
     if not hazards:
         raise ValueError("hazard input has no non-empty geometries")
+    tree = STRtree(hazards)
     result = graph.copy()
     for u, v, key, data in result.edges(keys=True, data=True):
         geometry = _edge_geometry(result, u, v, data)
-        data[attribute] = any(geometry.intersects(hazard) for hazard in hazards)
+        data[attribute] = len(tree.query(geometry, predicate="intersects")) > 0
     return result

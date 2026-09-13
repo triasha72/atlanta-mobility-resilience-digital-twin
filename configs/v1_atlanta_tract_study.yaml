@@ -24,6 +24,8 @@ scenarios:
   - name: high_betweenness_10_edge_closure
     type: high_betweenness_edges
     n_edges: 10
+    # Reproducible sampled approximation; exact centrality is impractical at this scale.
+    betweenness_sample_nodes: 200
 
 origins_file: "../data/processed/acs_tract_origins.csv"
 destinations_file: "../data/processed/osm_essential_destinations.csv"

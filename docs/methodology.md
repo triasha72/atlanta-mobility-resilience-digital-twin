@@ -21,6 +21,11 @@ Version 1 is a **road-network resilience simulation prototype**, not a calibrate
 - `random_edges`: removes a random set of directed road edges.
 - `high_betweenness_edges`: removes edges connecting node pairs ranked highly by travel-time-weighted edge betweenness.
 
+For large graphs, `high_betweenness_edges` may set
+`betweenness_sample_nodes` to use a seeded source-node sample rather than
+exact all-node betweenness. This is a scalable approximation and must be
+reported as such; it is not interchangeable with an exact centrality ranking.
+
 Set `replicates` on a `random_edges` scenario to sample an independent,
 deterministically seeded closure ensemble. The pipeline retains one OD and
 accessibility file per replicate and writes empirical mean, 5th-percentile,

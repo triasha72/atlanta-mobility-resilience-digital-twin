@@ -18,7 +18,9 @@ class ScenarioResult:
     removed_edges: list[tuple[int, int, int]]
 
 
-def _edge_pairs_ranked_by_betweenness(graph: nx.MultiDiGraph) -> list[tuple[int, int]]:
+def _edge_pairs_ranked_by_betweenness(
+    graph: nx.MultiDiGraph, *, sample_nodes: int | None = None, seed: int | None = None
+) -> list[tuple[int, int]]:
     """Rank undirected node pairs by edge betweenness using travel time weights."""
     simple = nx.Graph()
     for u, v, _key, data in graph.edges(keys=True, data=True):
@@ -28,7 +30,11 @@ def _edge_pairs_ranked_by_betweenness(graph: nx.MultiDiGraph) -> list[tuple[int,
         else:
             simple.add_edge(u, v, weight=weight)
 
-    scores = nx.edge_betweenness_centrality(simple, weight="weight", normalized=True)
+    if sample_nodes is not None and sample_nodes < 1:
+        raise ValueError("betweenness_sample_nodes must be positive")
+    scores = nx.edge_betweenness_centrality(
+        simple, weight="weight", normalized=True, k=sample_nodes, seed=seed
+    )
     return [edge for edge, _score in sorted(scores.items(), key=lambda item: item[1], reverse=True)]
 
 
@@ -69,7 +75,12 @@ def apply_scenario(
         removed = [available[int(index)] for index in indices]
 
     elif scenario_type == "high_betweenness_edges":
-        ranked_pairs = _edge_pairs_ranked_by_betweenness(disrupted)
+        sample_nodes = scenario.get("betweenness_sample_nodes")
+        ranked_pairs = _edge_pairs_ranked_by_betweenness(
+            disrupted,
+            sample_nodes=int(sample_nodes) if sample_nodes is not None else None,
+            seed=random_seed,
+        )
         selected_pairs = ranked_pairs[:n_edges]
         removed = _edges_for_pairs(disrupted, selected_pairs)
 

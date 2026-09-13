@@ -1,0 +1,9 @@
+{
+  "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query",
+  "query_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query?f=geojson&where=SFHA_TF+%3D+%27T%27&geometry=%7B%22xmin%22%3A-84.5177515%2C%22ymin%22%3A33.650117%2C%22xmax%22%3A-84.2581992%2C%22ymax%22%3A33.865912%7D&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CFLD_ZONE%2CSFHA_TF%2CDFIRM_ID&returnGeometry=true&outSR=4326",
+  "request_count": 9,
+  "retrieved_at": "2026-09-13T00:25:36.222613+00:00",
+  "payload_sha256": "bb2bda5c400ec246790e3a32b2c0c6955af4326ecf6f673f135e5621c74c3042",
+  "feature_count": 3575,
+  "license_note": "FEMA National Flood Hazard Layer; inspect FEMA terms before reuse."
+}

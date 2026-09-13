@@ -1,0 +1,28 @@
+project:
+  name: Atlanta tract-access FEMA flood-overlay study
+  version: 1.0.0
+  random_seed: 20260912
+
+study_area:
+  center_lat: 33.7580
+  center_lon: -84.3880
+  dist_meters: 12000
+  network_type: "drive"
+
+routing:
+  weight: "travel_time"
+  max_travel_time_minutes: 30
+
+scenarios:
+  - name: baseline
+    type: baseline
+  - name: fema_nfhl_special_flood_hazard_area_closure
+    type: flood_exposed_edges
+
+origins_file: "../data/processed/acs_tract_origins.csv"
+destinations_file: "../data/processed/osm_essential_destinations.csv"
+
+paths:
+  graph_file: "data/processed/atlanta_tract_study_flood.graphml"
+  output_dir: "outputs/atlanta_tract_study_flood"
+  figure_dir: "figures/atlanta_tract_study_flood"
