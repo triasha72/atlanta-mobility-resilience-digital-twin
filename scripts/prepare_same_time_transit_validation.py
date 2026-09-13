@@ -16,12 +16,15 @@ import pandas as pd
 from amrdt.gtfs import audit_gtfs_feed
 
 try:  # Supports both `python scripts/...` and package imports in tests.
-    from scripts.capture_marta_gtfs_realtime import MARTA_TRIP_UPDATES_URL
+    from scripts.capture_marta_gtfs_realtime import (
+        MARTA_TRIP_UPDATES_URL,
+        MARTA_VEHICLE_POSITIONS_URL,
+    )
     from scripts.capture_marta_gtfs_realtime import receipt as realtime_receipt
     from scripts.create_proxy_calibration_sample import exclude_prior_tract_destination_pairs
     from scripts.create_transit_validation_sample import build_sample
 except ModuleNotFoundError:  # pragma: no cover - direct script execution only
-    from capture_marta_gtfs_realtime import MARTA_TRIP_UPDATES_URL
+    from capture_marta_gtfs_realtime import MARTA_TRIP_UPDATES_URL, MARTA_VEHICLE_POSITIONS_URL
     from capture_marta_gtfs_realtime import receipt as realtime_receipt
     from create_proxy_calibration_sample import exclude_prior_tract_destination_pairs
     from create_transit_validation_sample import build_sample
@@ -38,6 +41,8 @@ def output_paths(root: Path, run_id: str) -> dict[str, Path]:
         "static_receipt": root / "reports" / f"marta_gtfs_receipt_{run_id}.json",
         "realtime_feed": root / "data/external/marta" / f"tripupdates_{run_id}.pb",
         "realtime_receipt": root / "reports" / f"marta_tripupdates_receipt_{run_id}.json",
+        "vehicle_feed": root / "data/external/marta" / f"vehiclepositions_{run_id}.pb",
+        "vehicle_receipt": root / "reports" / f"marta_vehiclepositions_receipt_{run_id}.json",
         "od": root / "outputs" / f"transit_accessibility_polygon_same_time_{run_id}.csv",
         "sample": root / "outputs" / f"transit_polygon_same_time_holdout_{run_id}.csv",
         "manifest": root / "reports" / f"transit_same_time_validation_manifest_{run_id}.json",
@@ -114,6 +119,9 @@ def main() -> int:
         content_type=realtime_content_type,
     )
     paths["realtime_receipt"].write_text(json.dumps(realtime, indent=2) + "\n", encoding="utf-8")
+    vehicle_payload, vehicle_content_type = download(MARTA_VEHICLE_POSITIONS_URL, paths["vehicle_feed"])
+    vehicle = realtime_receipt(payload=vehicle_payload, source_url=MARTA_VEHICLE_POSITIONS_URL, captured_at=captured_at, content_type=vehicle_content_type, dataset="MARTA Bus GTFS-Realtime Vehicle Positions")
+    paths["vehicle_receipt"].write_text(json.dumps(vehicle, indent=2) + "\n", encoding="utf-8")
 
     command = [
         sys.executable, "scripts/evaluate_transit_accessibility.py",
@@ -150,6 +158,7 @@ def main() -> int:
         "source_aligned": source_aligned,
         "static_gtfs_receipt": str(paths["static_receipt"].relative_to(root)),
         "realtime_trip_updates_receipt": str(paths["realtime_receipt"].relative_to(root)),
+        "realtime_vehicle_positions_receipt": str(paths["vehicle_receipt"].relative_to(root)),
         "fresh_holdout_sample": str(paths["sample"].relative_to(root)),
         "planner_review_required": True,
         "publication_gate": (

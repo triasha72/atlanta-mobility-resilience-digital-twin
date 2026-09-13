@@ -30,15 +30,20 @@ def verify_sources(root: Path, manifest: dict[str, object]) -> None:
         raise ValueError("publication gate requires a source-aligned capture")
     static_receipt_path = root / str(manifest["static_gtfs_receipt"])
     realtime_receipt_path = root / str(manifest["realtime_trip_updates_receipt"])
+    vehicle_receipt_path = root / str(manifest["realtime_vehicle_positions_receipt"])
     static_receipt = json.loads(static_receipt_path.read_text(encoding="utf-8"))
     realtime_receipt = json.loads(realtime_receipt_path.read_text(encoding="utf-8"))
+    vehicle_receipt = json.loads(vehicle_receipt_path.read_text(encoding="utf-8"))
     run_id = static_receipt_path.stem.removeprefix("marta_gtfs_receipt_")
     static_feed = root / "data/external/marta" / f"google_transit_{run_id}.zip"
     realtime_feed = root / "data/external/marta" / f"tripupdates_{run_id}.pb"
+    vehicle_feed = root / "data/external/marta" / f"vehiclepositions_{run_id}.pb"
     if sha256_file(static_feed) != static_receipt["feed_sha256"]:
         raise ValueError("static GTFS checksum does not match its receipt")
     if sha256_file(realtime_feed) != realtime_receipt["payload_sha256"]:
         raise ValueError("GTFS-Realtime checksum does not match its receipt")
+    if sha256_file(vehicle_feed) != vehicle_receipt["payload_sha256"]:
+        raise ValueError("vehicle-position checksum does not match its receipt")
 
 
 def review_is_complete(sample: pd.DataFrame, reviewed: pd.DataFrame) -> bool:

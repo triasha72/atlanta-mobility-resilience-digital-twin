@@ -12,13 +12,14 @@ from urllib.request import Request, urlopen
 MARTA_TRIP_UPDATES_URL = (
     "https://gtfs-rt.itsmarta.com/TMGTFSRealTimeWebService/tripupdate/tripupdates.pb"
 )
+MARTA_VEHICLE_POSITIONS_URL = "https://gtfs-rt.itsmarta.com/TMGTFSRealTimeWebService/vehicle/vehicle.pb"
 
 
-def receipt(*, payload: bytes, source_url: str, captured_at: str, content_type: str | None) -> dict[str, object]:
+def receipt(*, payload: bytes, source_url: str, captured_at: str, content_type: str | None, dataset: str = "MARTA Bus GTFS-Realtime Trip Updates") -> dict[str, object]:
     """Return a content-free receipt for one immutable realtime snapshot."""
     return {
         "schema_version": "1.0",
-        "dataset": "MARTA Bus GTFS-Realtime Trip Updates",
+        "dataset": dataset,
         "source_url": source_url,
         "captured_at": captured_at,
         "content_type": content_type,

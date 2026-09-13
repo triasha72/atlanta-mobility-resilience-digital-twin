@@ -16,18 +16,24 @@ def test_verify_sources_checks_both_captured_feeds(tmp_path: Path) -> None:
     reports.mkdir()
     static = marta / "google_transit_run.zip"
     realtime = marta / "tripupdates_run.pb"
+    vehicle = marta / "vehiclepositions_run.pb"
     static.write_bytes(b"static")
     realtime.write_bytes(b"realtime")
+    vehicle.write_bytes(b"vehicle")
     (reports / "marta_gtfs_receipt_run.json").write_text(
         json.dumps({"feed_sha256": hashlib.sha256(b"static").hexdigest()})
     )
     (reports / "marta_tripupdates_receipt_run.json").write_text(
         json.dumps({"payload_sha256": hashlib.sha256(b"realtime").hexdigest()})
     )
+    (reports / "marta_vehiclepositions_receipt_run.json").write_text(
+        json.dumps({"payload_sha256": hashlib.sha256(b"vehicle").hexdigest()})
+    )
     verify_sources(root, {
         "source_aligned": True,
         "static_gtfs_receipt": "reports/marta_gtfs_receipt_run.json",
         "realtime_trip_updates_receipt": "reports/marta_tripupdates_receipt_run.json",
+        "realtime_vehicle_positions_receipt": "reports/marta_vehiclepositions_receipt_run.json",
     })
 
 
