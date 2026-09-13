@@ -59,7 +59,9 @@ def main() -> int:
     routing_start = time.perf_counter()
     reachable_pairs = 0
     for source in origin_nodes.values():
-        distances = cugraph.sssp(gpu_graph, source=int(source), weight="weight")
+        # Edge weights are bound when the graph is constructed.  Recent
+        # cuGraph releases do not accept a NetworkX-style ``weight`` keyword.
+        distances = cugraph.sssp(gpu_graph, source=int(source))
         requested = distances[distances["vertex"].isin(list(destination_nodes.values()))]
         reachable_pairs += int((requested["distance"] != float("inf")).sum())
     routing_seconds = time.perf_counter() - routing_start
