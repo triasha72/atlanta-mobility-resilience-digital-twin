@@ -75,6 +75,11 @@ PYTHONPATH=src python3 scripts/benchmark_routing.py \
   --output reports/atlanta_tract_cpu_benchmark.json
 ```
 
+For a free, availability-dependent NVIDIA GPU experiment, open the committed
+Colab notebook, select a GPU runtime, and retain its generated receipt:
+
+[Open the Colab CUDA notebook](https://colab.research.google.com/github/triasha72/atlanta-mobility-resilience-digital-twin/blob/main/notebooks/colab_cuda_benchmark.ipynb)
+
 To turn the FEMA sensitivity into an event-calibrated study, provide a
 CRS-declared official road-closure GeoJSON for a specific event. The following
 creates a graph with observed closure labels and reports edge-level precision
