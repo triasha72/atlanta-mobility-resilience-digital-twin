@@ -56,9 +56,10 @@
 
 ## Version 3: NVIDIA-facing technical extension
 
-- [ ] GPU-accelerated graph metrics with RAPIDS cuGraph (requires CUDA-capable host)
+- [x] GPU-accelerated cuGraph shortest-path benchmark on Google Colab T4
+- [ ] GPU-accelerated graph metrics beyond routing
 - [ ] graph neural network for impact prediction
-- [x] CPU routing benchmark and GPU-readiness report; GPU comparison remains blocked by hardware
+- [x] paired CPU/GPU routing benchmark and CUDA receipt
 - [ ] research poster or workshop-paper submission
 
 ## Version 4: Privacy-aware synthetic mobility data
