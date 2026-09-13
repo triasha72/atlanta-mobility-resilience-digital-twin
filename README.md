@@ -54,6 +54,40 @@ The completed tract-scale road/flood sensitivity study is documented in
 It uses the FEMA special-flood-hazard-area overlay as a reproducible stress
 test, not as evidence of an observed road closure.
 
+The project can also generate reproducible, aggregate-only synthetic OD demand
+from public tract-population and destination-opportunity weights. It contains
+no individual trips or trajectories, and reports total-variation utility for
+the public origin and destination margins:
+
+```bash
+PYTHONPATH=src python3 scripts/generate_synthetic_od_demand.py \
+  --origins data/processed/acs_tract_origins.csv \
+  --destinations data/processed/osm_essential_destinations.csv \
+  --output outputs/synthetic_od_demand.csv \
+  --utility-output reports/synthetic_od_demand_utility.csv
+```
+
+Measure CPU routing performance and whether the runtime supports cuGraph with:
+
+```bash
+PYTHONPATH=src python3 scripts/benchmark_routing.py \
+  --config configs/v1_atlanta_tract_study.yaml \
+  --output reports/atlanta_tract_cpu_benchmark.json
+```
+
+To turn the FEMA sensitivity into an event-calibrated study, provide a
+CRS-declared official road-closure GeoJSON for a specific event. The following
+creates a graph with observed closure labels and reports edge-level precision
+and recall; it does not infer closures where the source has none:
+
+```bash
+PYTHONPATH=src python3 scripts/calibrate_flood_overlay.py \
+  --graph data/processed/atlanta_tract_study_flood.graphml \
+  --closures data/external/official_event_closures.geojson \
+  --output-graph data/processed/atlanta_tract_event_calibrated.graphml \
+  --summary-output reports/atlanta_flood_overlay_calibration.csv
+```
+
 For a flood-overlay sensitivity scenario, annotate a cached road graph with a
 versioned, CRS-declared hazard GeoJSON or GeoPackage, then configure a
 `flood_exposed_edges` scenario. This removes intersecting edges; it does not

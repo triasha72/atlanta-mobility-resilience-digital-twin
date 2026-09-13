@@ -50,17 +50,19 @@
   same-time holdouts before applying the pre-registered publication gate.
 - [x] reproducible flood-hazard edge-overlay disruption layer (requires a
   versioned, CRS-declared hazard dataset for a study run)
+- [x] observed-closure calibration workflow for FEMA overlay precision/recall
+  (requires an official event-specific closure dataset)
 - [x] repeated random-closure simulations and empirical uncertainty intervals
 
 ## Version 3: NVIDIA-facing technical extension
 
-- [ ] GPU-accelerated graph metrics with RAPIDS cuGraph
+- [ ] GPU-accelerated graph metrics with RAPIDS cuGraph (requires CUDA-capable host)
 - [ ] graph neural network for impact prediction
-- [ ] benchmark CPU vs GPU runtime and scale
+- [x] CPU routing benchmark and GPU-readiness report; GPU comparison remains blocked by hardware
 - [ ] research poster or workshop-paper submission
 
 ## Version 4: Privacy-aware synthetic mobility data
 
-- [ ] baseline synthetic OD-demand generation
-- [ ] privacy/utility evaluation
+- [x] aggregate-only synthetic OD-demand generation
+- [x] public-margin utility evaluation for synthetic OD demand
 - [ ] test whether synthetic demand preserves resilience conclusions

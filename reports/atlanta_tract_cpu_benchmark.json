@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "nodes": 22145,
+  "edges": 56516,
+  "od_pairs": 5050,
+  "cpu_routing_seconds": 4.81667870900128,
+  "cugraph_available": false,
+  "cuda_runtime_available": false
+}
