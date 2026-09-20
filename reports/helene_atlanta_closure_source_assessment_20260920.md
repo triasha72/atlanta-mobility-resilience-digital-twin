@@ -59,4 +59,23 @@ the closure-learning workflow, but it cannot validate an Atlanta flood model.
 Any use of it must be reported as a different geography and must still define a
 defensible observed-open/control set before classification or GNN evaluation.
 
+The repository now includes a paginated, checksummed downloader and label
+coverage gate for this purpose. The bounded Buncombe County retrieval on
+2026-09-20 contained 80 line records, all explicitly labelled `Closed=yes`.
+The resulting gate correctly blocked supervised classification because it had
+no explicit observed-open records. Its receipt and audit are retained in
+`reports/ncdot_helene_buncombe_closures_receipt_20260920.json` and
+`reports/ncdot_helene_buncombe_label_audit_20260920.json`.
+
+```bash
+PYTHONPATH=src python3 scripts/download_ncdot_helene_closures.py \
+  --county Buncombe \
+  --output data/external/ncdot_helene_buncombe_closures.geojson \
+  --receipt reports/ncdot_helene_buncombe_closures_receipt.json
+
+PYTHONPATH=src python3 scripts/audit_event_label_coverage.py \
+  --input data/external/ncdot_helene_buncombe_closures.geojson \
+  --output reports/ncdot_helene_buncombe_label_audit.json
+```
+
 Source: [NCDOT Hurricane Helene response map](https://www.arcgis.com/home/item.html?id=66d0698a5ba846e5989d282301f4405d).

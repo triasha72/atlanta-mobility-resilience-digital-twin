@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "input": "data/external/ncdot_helene_buncombe_closures.geojson",
+  "input_sha256": "3e871f73b20b714fe5fc27cafc1c696e008a3cbe982e12fcdf584476f9bdd264",
+  "feature_count": 80,
+  "geometry_types": [
+    "LineString"
+  ],
+  "label_field": "Closed",
+  "label_counts": {
+    "yes": 80
+  },
+  "positive_count": 80,
+  "negative_count": 0,
+  "eligible_for_supervised_classification": false,
+  "decision": "blocked_missing_explicit_positive_or_negative_labels",
+  "limitation": "Absent event records are not treated as observed-open roads. Do not run the baseline or GNN unless the gate is eligible."
+}

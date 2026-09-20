@@ -1,0 +1,9 @@
+{
+  "source_url": "https://services.arcgis.com/NuWFvHYDMVmmxMeM/arcgis/rest/services/State_Maintained_Historical_TIMS_Incidents_Hurricane_Helene/FeatureServer/1/query",
+  "where": "CountyName = 'Buncombe'",
+  "retrieved_at": "2026-09-20T23:02:19.536920+00:00",
+  "payload_sha256": "3e871f73b20b714fe5fc27cafc1c696e008a3cbe982e12fcdf584476f9bdd264",
+  "feature_count": 80,
+  "request_count": 1,
+  "study_scope": "North Carolina Hurricane Helene transfer benchmark; not Atlanta validation."
+}
