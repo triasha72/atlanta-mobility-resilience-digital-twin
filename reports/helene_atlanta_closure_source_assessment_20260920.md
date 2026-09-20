@@ -14,6 +14,13 @@ Road, and a submerged closure on Bohler Road between Battleview Drive and Cross
 Creek Parkway. The page is useful event evidence, but it is not a downloadable
 road-closure layer and does not provide geometries or complete network coverage.
 
+An Internet Archive capture of the official page from 2024-09-28 16:38:43 UTC
+is retained locally under `data/external/helene/`. Its archive URL and SHA-256
+are recorded in `reports/atlanta_helene_archived_source_receipt_20260920.json`.
+The capture contains the Bohler Road, Bolton Road, and Lake Forrest Drive
+statements. It improves provenance and timing, but still does not provide line
+geometry or observed-open coverage.
+
 Georgia 511 documents an Events API with closure fields, an event identifier,
 roadway attributes, and a developer key requirement. Its documented endpoint
 returns traffic events; no public historical-event archive was located in the

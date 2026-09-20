@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "source_url": "https://www.atlantaga.gov/government/mayor-s-office/executive-offices/office-of-emergency-preparedness/city-of-atlanta-hurricane-helene-preparedness",
+  "archive_url": "https://web.archive.org/web/20240928163843id_/https://www.atlantaga.gov/government/mayor-s-office/executive-offices/office-of-emergency-preparedness/city-of-atlanta-hurricane-helene-preparedness",
+  "archive_capture_timestamp": "2024-09-28T16:38:43Z",
+  "retrieved_at": "2026-09-20T23:00:00Z",
+  "local_artifact": "data/external/helene/atlanta_official_helene_update_20240928.html",
+  "payload_sha256": "503a89a6e5d8d1e1f1c4ab0c5dc9a816790180ecf60e9f11bc72bd3ad6b950c2",
+  "evidence": [
+    "Bohler Road Bridge submerged and closed between Battleview Drive NW and Cross Creek Parkway NW",
+    "Bolton Road closed between Marietta Boulevard and Marietta Road due to severe flooding",
+    "4504 Lake Forrest Drive NW closed after a sinkhole"
+  ],
+  "limitation": "Official contemporaneous prose evidence; not a complete geospatial closure/open-road layer."
+}
