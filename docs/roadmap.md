@@ -58,7 +58,11 @@
 
 - [x] GPU-accelerated cuGraph shortest-path benchmark on Google Colab T4
 - [ ] GPU-accelerated graph metrics beyond routing
-- [ ] graph neural network for impact prediction
+- [x] event-label feature preparation and spatially held-out baseline for road
+  closure impact prediction (requires official closure labels before a study
+  can run)
+- [ ] graph neural network for impact prediction, after the event-label
+  baseline establishes a valid comparison
 - [x] paired CPU/GPU routing benchmark and CUDA receipt
 - [ ] research poster or workshop-paper submission
 

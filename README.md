@@ -104,6 +104,25 @@ PYTHONPATH=src python3 scripts/calibrate_flood_overlay.py \
   --summary-output reports/atlanta_flood_overlay_calibration.csv
 ```
 
+Once that event-labeled graph has passed the closure-source review, prepare a
+leakage-aware edge table and run the spatially held-out baseline below. This is
+the prerequisite for a later GNN study; it does not manufacture labels from
+the FEMA overlay.
+
+```bash
+PYTHONPATH=src python3 scripts/prepare_edge_closure_learning_data.py \
+  --graph data/processed/atlanta_tract_event_calibrated.graphml \
+  --output data/processed/atlanta_event_edge_labels.csv
+
+PYTHONPATH=src python3 scripts/train_edge_closure_baseline.py \
+  --input data/processed/atlanta_event_edge_labels.csv \
+  --output reports/atlanta_event_spatial_baseline.json
+```
+
+The baseline holds out coarse spatial blocks rather than random edges, which
+prevents geographically adjacent segments from leaking into both evaluation
+sets. It requires official labels for both closed and open edges in each split.
+
 For a flood-overlay sensitivity scenario, annotate a cached road graph with a
 versioned, CRS-declared hazard GeoJSON or GeoPackage, then configure a
 `flood_exposed_edges` scenario. This removes intersecting edges; it does not
@@ -460,6 +479,15 @@ amrdt run --config configs/v1_demo.yaml
 
 # 4. Run tests
 pytest
+```
+
+If an existing virtual environment stalls while importing packages, preserve it
+for inspection and create a clean environment instead:
+
+```bash
+python3 -m venv /private/tmp/amrdt-clean-venv
+/private/tmp/amrdt-clean-venv/bin/python -m pip install -e ".[dev]"
+PYTHONPATH=src /private/tmp/amrdt-clean-venv/bin/python -m pytest -q
 ```
 
 The first run downloads and caches the configured road network in `data/processed/`. Later runs reuse the cached GraphML file.
